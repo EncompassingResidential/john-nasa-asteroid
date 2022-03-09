@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 let initialneoInputState = {
     id: `${Date.now()}`,
-    dateNeoSearchStart: Date("1/1/2000"),
+    dateNeoSearchStart: Date("1/1/2021"),
+    dateNeoSearchEnd: Date("1/10/2021"),
     neoDistanceKM: 0.0,
     neoNameStr: "",
     neoDescription: "",
@@ -87,6 +88,7 @@ export default function NASANeoMainContent() {
             {
             id: neoInputState.id,
             dateNeoSearchStart: neoInputState.dateNeoSearchStart,
+            dateNeoSearchEnd: neoInputState.dateNeoSearchEnd,
             neoDistanceKM: convert_to_float(neoInputState.neoDistanceKM),
             neoNameStr: neoInputState.neoNameStr,
             neoDescription: neoInputState.neoDescription,
@@ -126,6 +128,7 @@ export default function NASANeoMainContent() {
                 <Card body className="mx-1 my-1" border="success">
                     <Row className="text-success py-1" >
                         <Col>NEO Search Start {neo.dateNeoSearchStart}</Col>
+                        <Col>NEO Search End {neo.dateNeoSearchEnd}</Col>
                         <Col>Miles {formatKMtoMiles(neo.neoDistanceKM)}</Col>
                     </Row >
                     <Row >
@@ -157,7 +160,7 @@ export default function NASANeoMainContent() {
             >
                 <Row>
                     <Col md>
-                        <Form.Group controlId="formDate">
+                        <Form.Group controlId="formStartDate">
                             <Form.Label>NEO Search Start Date</Form.Label>
                             <Form.Control
                                 type="date"
@@ -171,8 +174,22 @@ export default function NASANeoMainContent() {
                         </Form.Group>
                     </Col>
                     <Col md>
+                        <Form.Group controlId="formEndDate">
+                            <Form.Label>NEO Search End Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                placeholder="NEO End Date"
+                                
+                                onChange={handleChange}
+                                value={neoInputState.dateNeoSearchEnd} // This "value={}" is how to impliment React controlled components
+                                name="dateNeoSearchEnd"
+                                
+                                />
+                        </Form.Group>
+                    </Col>
+                    <Col md>
                         <Form.Group controlId="formNeoDistance">
-                            <Form.Label>NEO Distance</Form.Label>
+                            <Form.Label>NEO Distance in Kilometers</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="NEO Distance in KM"
