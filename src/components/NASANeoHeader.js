@@ -6,7 +6,7 @@ export default function ExpensesHeader() {
     <div className="expense--header">
             <img className="header--image" src={NASA_NEO_image} alt="" />
             <h2 className="header--title">NASA Earth Observations NEO - Asteroid Search App</h2>
-            <h4 className="header--project">SDMM Project 5 Version 3/09/22</h4>
+            <h4 className="header--project">SDMM Project 5 - Version 3/09/22</h4>
     </div>
     )
   }

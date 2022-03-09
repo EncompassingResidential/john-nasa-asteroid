@@ -1,9 +1,15 @@
 
+.container { 
+    backgroundImage: url(../images/JPL Center for Near Earth Object Studies CNEOS - NASA Double Asteroid Redirect Test DART mission 2021-12-06.jpg);
+    backgroundRepeat: repeat;
+    width: 500px 
+}
+
 .expense--header {
     display: flex;
     align-items: center;
-    height: 65px;
-    background: linear-gradient(90deg, #672280 1.18%, #A626D3 100%);
+    height: 95px;
+    background: linear-gradient(90deg, #940202 1.18%, #3403a5 100%);
     color: white;
     padding: 20px;
 }
