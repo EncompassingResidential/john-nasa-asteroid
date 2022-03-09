@@ -1,4 +1,4 @@
-# john-nasa-asteroid
+# John's NASA NEO Asteroid Search (JNNAS)
 
 This App gets data from NASA's  “near earth objects” (NEO’s) JPL sever to search via the NASA API.
 
