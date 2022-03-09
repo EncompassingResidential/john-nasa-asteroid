@@ -1,9 +1,10 @@
 # john-nasa-asteroid
-Using NASA API to search for “near earth objects” (NEO’s) via the NASA API.
 
-You can find my CV Resume at Linked In https://www.linkedin.com/in/johntritz/
+This App gets data from NASA's  “near earth objects” (NEO’s) JPL sever to search via the NASA API.
 
-My personal life coach website is https://www.soberjourneycopilot.com/
+[You can find my CV Resume here at Linked In www](https://www.linkedin.com/in/johntritz/)
+
+[click here for my personal Life Coach website](https://www.soberjourneycopilot.com/)
 
 # Getting Started with Create React App
 
