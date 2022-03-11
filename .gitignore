@@ -2,8 +2,9 @@
 
 *.code-workspace
 archive
+data
 lessons
-NARA Generated API Key 2022-03-08.txt
+NASA Generated API Key 2022-03-08.txt
 
 # dependencies
 /node_modules

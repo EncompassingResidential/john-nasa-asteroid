@@ -6,9 +6,23 @@ This App gets data from NASA's  “near earth objects” (NEO’s) JPL sever to 
 
 [click here for my personal Life Coach website](https://www.soberjourneycopilot.com/)
 
-# Getting Started with Create React App
+# manual acquistion of data
+
+https://api.nasa.gov/
+
+Generate API Key
+
+Here is getting NEOs objects via date range:
+https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-03-10&end_date=2022-03-10&api_key={API_KEY}
+
+The date range data has asteroid ID which can be used to get more data about that NEO.  Here is API call for Asteroid ID:
+https://api.nasa.gov/neo/rest/v1/neo/3313974?api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja
+
+helped with Javascript FETCH commands
+Using www https://www.javascripttutorial.net/javascript-fetch-api/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+and Bootstrap styling library / framework.
 
 ## Available Scripts
 
@@ -37,15 +51,6 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
 ## Learn More
 

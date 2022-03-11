@@ -80,24 +80,48 @@ export default function NASANeoMainContent() {
         console.log()
     }
  
-    function startNEOSearch(event) {
+    async  function startNEOSearch(event) {
 
-        setAllNEOsArray(allNEOsArray => {
-            return [
-            ...allNEOsArray,
-            {
-            id: neoInputState.id,
-            dateNeoSearchStart: neoInputState.dateNeoSearchStart,
-            dateNeoSearchEnd: neoInputState.dateNeoSearchEnd,
-            neoDistanceKM: convert_to_float(neoInputState.neoDistanceKM),
-            neoNameStr: neoInputState.neoNameStr,
-            neoDescription: neoInputState.neoDescription,
-            yagni: neoInputState.yagni
-            }
-        ]
+        let response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-03-10&end_date=2022-03-10&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja');
+
+        console.log(response.status); // 200
+        console.log(response.statusText); // OK
+
+        if (response.status === 200) {
+
+            let dataNEOsFromNASA = await response.json();
+
+            console.log("About to show data {dataNEOsFromNASA}")
+            console.dir({dataNEOsFromNASA}); // show as arrow object
+            
+            // console.dir(dataNEOsFromNASA !== undefined, "NEO Data from NASA is undefined");
+
+            // console.dir(`dataNEOsFromNASA.length = ${dataNEOsFromNASA.length}`);
+            console.dir(`dataNEOsFromNASA.links = ${dataNEOsFromNASA.links}`);
+            console.log(`dataNEOsFromNASA.element_count = ${dataNEOsFromNASA.element_count}`);
+            
+            // says undefined
+            console.log(`dataNEOsFromNASA.near_earth_objects.length = ${dataNEOsFromNASA.near_earth_objects.length}`);
+
+            console.dir(`dataNEOsFromNASA.near_earth_objects = ${dataNEOsFromNASA.near_earth_objects}`);
+
+            setAllNEOsArray(prevAllNEOsArray => {
+                return [
+                ...prevAllNEOsArray,
+                { 
+                    links               : dataNEOsFromNASA.links,
+                    element_count       : dataNEOsFromNASA.element_count,
+                    near_earth_objects  : dataNEOsFromNASA.near_earth_objects
+                } ]
+            })
         }
-        )
+        else {
+            console.log("NASA NEO HTTP request attempted");
+            console.log(response.text)
+            console.log(response.statusText)
+        }
 
+    /*
         setNeoInputState(prevNEOInputState => {
             return {
                 ...prevNEOInputState,
@@ -108,6 +132,7 @@ export default function NASANeoMainContent() {
                 yagni: true
             }
         })
+        */
 
     }
 
@@ -223,6 +248,15 @@ export default function NASANeoMainContent() {
                     spacing="15"
                 >
                     Search for NEOs
+                </Button>
+                <Button
+                    onClick={clearLocalStorage}
+                    size="sm"
+                    variant="primary"
+                    className="mx-5 p-2 my-1"
+                    spacing="15"
+                >
+                    Clear Local Storage
                 </Button>
 
             </Form>
