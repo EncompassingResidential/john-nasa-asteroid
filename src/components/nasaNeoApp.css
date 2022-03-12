@@ -1,8 +1,7 @@
 
 .container { 
-    backgroundImage: url(../images/JPL Center for Near Earth Object Studies CNEOS - NASA Double Asteroid Redirect Test DART mission 2021-12-06.jpg);
-    backgroundRepeat: repeat;
-    width: 500px 
+    backgroundImage: url(../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg) repeat ;
+    background-color: lightskyblue;
 }
 
 .expense--header {

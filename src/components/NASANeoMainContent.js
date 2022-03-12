@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Card, Col, Form, Row, Table } from 'react-bootstrap'
+import { Button, Card, Col, Container, Form, Row, Table } from 'react-bootstrap'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -260,9 +260,11 @@ export default function NASANeoMainContent() {
                 </Button>
 
             </Form>
-            <Table striped responsive="md" variant='dark' border={2} className="px-1">
-                {NEOElementsToRender}
-            </Table>
+            <Container>
+                <Table striped responsive="md" variant='dark' border={2} className="px-1">
+                    {NEOElementsToRender}
+                </Table>
+            </Container>
 
         </Card>
     )
