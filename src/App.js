@@ -10,9 +10,11 @@ import React from 'react';
 
 export default function App() {
   return (
+    <div className='background--div' >
     <Card border="info">
       <NASANeoHeader />
       <NASANeoMainContent />
     </Card>
+    </div>
   )
 }

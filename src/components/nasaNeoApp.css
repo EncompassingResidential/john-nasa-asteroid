@@ -1,7 +1,16 @@
 
-.container { 
-    background-color: lightskyblue;
-    background-image: url(../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg) repeat ;
+.background--div  { 
+    /* background-color: red; */
+    height: 100vh;
+    background: url("../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg") no-repeat center center fixed ;
+    background-size: 100vh;
+}
+
+.Container  { 
+    /* background-color: red; */
+    height: 100vh;
+    background: url("../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg") no-repeat center center fixed ;
+    background-size: 100vh;
 }
 
 .expense--header {

@@ -19,9 +19,12 @@ export default function NASANeoMainContent() {
 
     const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage')) || [])
 
-    const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage')) || [])
+    const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage')) || 
+    [])
 
-    React.useEffect(() => {
+console.log("In NASANeoMainContent")
+
+React.useEffect(() => {
             localStorage.setItem('neosArrayStorage', JSON.stringify(allNEOsArray))
         }, [allNEOsArray]
     );
@@ -45,6 +48,7 @@ export default function NASANeoMainContent() {
     function handleChange(event) {
         const {name, value} = event.target
 
+        console.log("   ---   handleChange")
         setNeoInputState(prevNEOInputState => {
             return {
                 ...prevNEOInputState,
@@ -82,14 +86,14 @@ export default function NASANeoMainContent() {
  
     async  function startNEOSearch(event) {
 
-        let response = await fetch('https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-03-10&end_date=2022-03-10&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja');
+        const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${neoInputState.dateNeoSearchStart}&end_date=${neoInputState.dateNeoSearchEnd}&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja`);
 
         console.log(response.status); // 200
         console.log(response.statusText); // OK
 
         if (response.status === 200) {
 
-            let dataNEOsFromNASA = await response.json();
+            const dataNEOsFromNASA = await response.json();
 
             console.log("About to show data {dataNEOsFromNASA}")
             console.dir({dataNEOsFromNASA}); // show as arrow object
@@ -100,14 +104,15 @@ export default function NASANeoMainContent() {
             console.dir(`dataNEOsFromNASA.links = ${dataNEOsFromNASA.links}`);
             console.log(`dataNEOsFromNASA.element_count = ${dataNEOsFromNASA.element_count}`);
             
+            const tempNEO = dataNEOsFromNASA.near_earth_objects[neoInputState.dateNeoSearchStart]
             // says undefined
-            console.log(`dataNEOsFromNASA.near_earth_objects.length = ${dataNEOsFromNASA.near_earth_objects.length}`);
+            console.log(`dataNEOsFromNASA.near_earth_objects[${neoInputState.dateNeoSearchStart}].length = ${tempNEO.length}`);
 
-            console.dir(`dataNEOsFromNASA.near_earth_objects = ${dataNEOsFromNASA.near_earth_objects}`);
+            console.log(`next dataNEOsFromNASA.near_earth_objects[${neoInputState.dateNeoSearchStart}]`)
+            console.dir({tempNEO})
 
             setAllNEOsArray(prevAllNEOsArray => {
                 return [
-                ...prevAllNEOsArray,
                 { 
                     links               : dataNEOsFromNASA.links,
                     element_count       : dataNEOsFromNASA.element_count,
@@ -136,41 +141,40 @@ export default function NASANeoMainContent() {
 
     }
 
-    function deleteNeoItem(props) {
+    function getNeoDetails(props) {
 
-        setAllNEOsArray(allNEOsArray => {
-            return allNEOsArray.filter( item => 
-                { return( item.id !== props ) }
-            )
-        })
+        console.dir(props)
 
     }
 
-    const NEOElementsToRender = allNEOsArray.map((neo) => {
+    const NEOElementsToRender = allNEOsArray[0].near_earth_objects["2022-03-01"].map((neo) => {
+        console.log("neo.name is " + neo.name)
+        console.log("neo is ")
+        console.dir({neo})
         return (
             <Row key={neo.id} className="py-1" >
                 <Col className="px-5" xs={8} >
                 <Card body className="mx-1 my-1" border="success">
                     <Row className="text-success py-1" >
-                        <Col>NEO Search Start {neo.dateNeoSearchStart}</Col>
-                        <Col>NEO Search End {neo.dateNeoSearchEnd}</Col>
-                        <Col>Miles {formatKMtoMiles(neo.neoDistanceKM)}</Col>
+                        <Col>NEO Name {neo.name}</Col>
+                        <Col>NEO Absolute Magnitude H {neo.absolute_magnitude_h}</Col>
+                        <Col>Diameter in Feet {parseFloat(neo.estimated_diameter.feet.estimated_diameter_max).toFixed(2)}</Col>
                     </Row >
                     <Row >
                         <Col 
-                        className="text-success py-1">NEO Name: {neo.neoNameStr}</Col>
+                        className="text-success py-1">Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
                         <Col xl={4} 
-                        className="text-primary py-1">NEO Desc: {neo.neoDescription}</Col>
+                        className="text-primary py-1">Relative Velocity: {parseFloat(neo.close_approach_data[0].relative_velocity.miles_per_hour).toFixed(2)}</Col>
                     </Row>
-                    </Card>
+                </Card>
                 </Col>
                 <Col className="pt-5" >
                     <Button
-                        onClick={() => deleteNeoItem(neo.id)}
+                        onClick={() => getNeoDetails(neo.links.self)}
                         key={neo.id}
                         variant="outline-danger"
                         className=""
-                        >Delete This NEO reference<br />{formatKMtoMiles(neo.neoDistanceKM).slice(0,11)}
+                        >Get NEO reference Info<br />{neo.name}
                     </Button>
                 </Col>
             </Row>
@@ -262,7 +266,7 @@ export default function NASANeoMainContent() {
             </Form>
             <Container>
                 <Table striped responsive="md" variant='dark' border={2} className="px-1">
-                    {NEOElementsToRender}
+                    {NEOElementsToRender}                  
                 </Table>
             </Container>
 
