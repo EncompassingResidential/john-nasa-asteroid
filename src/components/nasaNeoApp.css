@@ -1,7 +1,7 @@
 
 .container { 
-    backgroundImage: url(../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg) repeat ;
     background-color: lightskyblue;
+    background-image: url(../images/JPL\ Center\ for\ Near\ Earth\ Object\ Studies\ CNEOS\ -\ NASA\ Double\ Asteroid\ Redirect\ Test\ DART\ mission\ 2021-12-06.jpg) repeat ;
 }
 
 .expense--header {
