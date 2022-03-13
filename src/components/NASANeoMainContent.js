@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Card, Col, Container, Form, Row, Table } from 'react-bootstrap'
+import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Table } from 'react-bootstrap'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -72,6 +72,15 @@ React.useEffect(() => {
 
             return("Error - $ neoDistanceKM is not number")
         }
+    }
+
+    function datesDiffInDays(firstDateString, secondDateString) {
+        const firstDate = new Date(firstDateString);
+        const secondDate = new Date(secondDateString);
+            
+        const millisecondsDiff = secondDate.getTime() - firstDate.getTime();
+            
+        return ( millisecondsDiff / (1000 * 60 * 60 * 24) )
     }
 
     function printOutArrays() {
@@ -147,36 +156,74 @@ React.useEffect(() => {
 
     }
 
-    const NEOElementsToRender = allNEOsArray[0].near_earth_objects["2022-03-01"].map((neo) => {
-        return (
-            <Row key={neo.id} className="py-1" >
-                <Col className="px-5" xs={8} >
-                <Card body className="mx-1 my-1" border="success">
-                    <Row className="text-success py-1" >
-                        <Col>NEO Name {neo.name}</Col>
-                        <Col>NEO Absolute Magnitude {neo.absolute_magnitude_h}</Col>
-                        <Col>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
-                    </Row >
-                    <Row >
-                        <Col 
-                        className="text-success py-1">Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
-                        <Col xl={4} 
-                        className="text-primary py-1">Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
+    function NEOElementsToRender() {
+    
+        console.log("   IN function NEOElementsToRender")
+        const allNearEarthObjects = allNEOsArray[0].near_earth_objects
+        let dateElementsToRender = []
+
+        const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
+
+        console.log(`- - -   numberOfDays between dates: ${neoInputState.dateNeoSearchStart} AND ${neoInputState.dateNeoSearchEnd} is ${numberOfDays}`)
+        if (numberOfDays < 0) {
+
+            console.error("Start Date is after End Date")
+            return (
+                <PageItem>Start Date {neoInputState.dateNeoSearchStart} is after End Date {neoInputState.dateNeoSearchEnd}</PageItem>
+                )
+        }
+
+        console.log(` + + +    Going to loop through dates EVENTUALLY`)
+        let loopDate = ""
+
+        // for loop neoInputState.dateNeoSearchStart to neoInputState.dateNeoSearchEnd
+
+
+        loopDate = "2022-03-01"
+        let dateNEOsArray = allNearEarthObjects[loopDate]
+        let dateForLoopElements = []
+
+        if (dateNEOsArray !== undefined) {
+            dateElementsToRender = dateForLoopElements.concat(dateNEOsArray.map((neo) => {
+                return (
+                    <Row key={neo.id} className="py-1" >
+                        <Col className="px-5" xs={8} >
+                        <Card body className="mx-1 my-1" border="success">
+                            <Row className="text-success py-1" >
+                                <Col>NEO Name {neo.name}</Col>
+                                <Col>NEO Absolute Magnitude {neo.absolute_magnitude_h}</Col>
+                                <Col>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
+                            </Row >
+                            <Row >
+                                <Col 
+                                className="text-success py-1">Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
+                                <Col xl={4} 
+                                className="text-primary py-1">Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
+                            </Row>
+                        </Card>
+                        </Col>
+                        <Col className="pt-5" >
+                            <Button
+                                onClick={() => getNeoDetails(neo.links.self)}
+                                key={neo.id}
+                                variant="outline-danger"
+                                className=""
+                                >Get NEO reference Info<br />{neo.name}
+                            </Button>
+                        </Col>
                     </Row>
-                </Card>
-                </Col>
-                <Col className="pt-5" >
-                    <Button
-                        onClick={() => getNeoDetails(neo.links.self)}
-                        key={neo.id}
-                        variant="outline-danger"
-                        className=""
-                        >Get NEO reference Info<br />{neo.name}
-                    </Button>
-                </Col>
-            </Row>
-        )
-    })
+                )
+            })
+            )
+        }
+        else {
+            console.warn(`Returning this to Table Render <PageItem>NASA NEOs for Date ${loopDate}</PageItem>`)
+            dateElementsToRender = dateForLoopElements.concat([`<PageItem>NASA NEOs for Date ${loopDate}</PageItem>`])
+        }
+
+        return dateElementsToRender
+
+    }
     
     return (
         <Card body className="mx-1 my-1" border="success">
@@ -263,7 +310,8 @@ React.useEffect(() => {
             </Form>
             <Container>
                 <Table striped responsive="md" variant='dark' border={2} className="px-1">
-                    {NEOElementsToRender}                  
+                    <PageItem>Is this a table element string</PageItem>
+                    {NEOElementsToRender()}                  
                 </Table>
             </Container>
 
