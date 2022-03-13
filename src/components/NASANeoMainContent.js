@@ -218,7 +218,9 @@ React.useEffect(() => {
         }
         else {
             console.warn(`Returning this to Table Render <PageItem>NASA NEOs for Date ${loopDate}</PageItem>`)
-            dateElementsToRender = dateForLoopElements.concat([`<PageItem>NASA NEOs for Date ${loopDate}</PageItem>`])
+
+            // 3/13/22 This doesn't return proper React JSX
+            dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {loopDate}</PageItem>)
         }
 
         return dateElementsToRender
