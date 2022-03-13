@@ -58,12 +58,12 @@ React.useEffect(() => {
         
     }
     
-    function formatKMtoMiles(neoDistanceKMFloat) {
+    function formatFloatToString(floatNumber) {
 
-       if (Number.isFinite(neoDistanceKMFloat) === true) {
-            const fixedDecimals = neoDistanceKMFloat.toFixed(2)
+       if (Number.isFinite(floatNumber) === true) {
+            const fixedDecimals = floatNumber.toFixed(2)
             const formatedNumber = new Intl.NumberFormat("en-US", {
-                style: "currency",
+                style: "decimal",
                 currency: "USD"
             }).format(fixedDecimals)
 
@@ -148,23 +148,20 @@ React.useEffect(() => {
     }
 
     const NEOElementsToRender = allNEOsArray[0].near_earth_objects["2022-03-01"].map((neo) => {
-        console.log("neo.name is " + neo.name)
-        console.log("neo is ")
-        console.dir({neo})
         return (
             <Row key={neo.id} className="py-1" >
                 <Col className="px-5" xs={8} >
                 <Card body className="mx-1 my-1" border="success">
                     <Row className="text-success py-1" >
                         <Col>NEO Name {neo.name}</Col>
-                        <Col>NEO Absolute Magnitude H {neo.absolute_magnitude_h}</Col>
-                        <Col>Diameter in Feet {parseFloat(neo.estimated_diameter.feet.estimated_diameter_max).toFixed(2)}</Col>
+                        <Col>NEO Absolute Magnitude {neo.absolute_magnitude_h}</Col>
+                        <Col>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
                     </Row >
                     <Row >
                         <Col 
                         className="text-success py-1">Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
                         <Col xl={4} 
-                        className="text-primary py-1">Relative Velocity: {parseFloat(neo.close_approach_data[0].relative_velocity.miles_per_hour).toFixed(2)}</Col>
+                        className="text-primary py-1">Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
                     </Row>
                 </Card>
                 </Col>
