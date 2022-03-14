@@ -219,7 +219,7 @@ React.useEffect(() => {
         else {
             console.warn(`Returning this to Table Render <PageItem>NASA NEOs for Date ${loopDate}</PageItem>`)
 
-            // 3/13/22 This doesn't return proper React JSX
+            // 3/13/22 This does return proper React JSX, but when I put inside ["<PageItem>etc."] it didn't return properly.
             dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {loopDate}</PageItem>)
         }
 
@@ -277,17 +277,6 @@ React.useEffect(() => {
                     </Col>
                 </Row>
                 <Row>
-                    <Form.Group controlId="formVendor">
-                        <Form.Label>Who did you pay?</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Type Who you paid"
-                            
-                            onChange={handleChange}
-                            name="neoNameStr"
-                            value={neoInputState.neoNameStr}  // React sometimes will complain that there are un-controlled components if this isn't done.
-                        />
-                    </Form.Group>
                 </Row>
                 
                 <Button
