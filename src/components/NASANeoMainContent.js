@@ -191,7 +191,7 @@ React.useEffect(() => {
             loopDateMonthString + '-' +
             loopDayOfMonthString
 
-        console.log(`loopDate is ${loopDate.toDateString()} NEODateFormat = ${NEODateFormat}`)
+        console.log(`loopDate is ${loopDate.toDateString()} NEODateFormat = ${NEODateFormat}  && typeof NEODateFormat is ${typeof NEODateFormat}`)
         let dateNEOsArray = allNearEarthObjects[NEODateFormat]
         let dateForLoopElements = []
 
@@ -215,6 +215,10 @@ React.useEffect(() => {
                                 >Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
                                 <Col xs={5} 
                                 >Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
+                            </Row>
+                            <Row>
+                            <Col className={classString}
+                                >Miss Distance from {neo.close_approach_data[0].orbiting_body}: {formatFloatToString(+(neo.close_approach_data[0].miss_distance.miles))} Miles</Col>
                             </Row>
                         </Card>
                         </Col>
@@ -280,10 +284,10 @@ React.useEffect(() => {
                     </Col>
                     <Col md>
                         <Form.Group controlId="formNeoDistance">
-                            <Form.Label>NEO Distance in Kilometers</Form.Label>
+                            <Form.Label>NEO Distance in Miles</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="NEO Distance in KM"
+                                placeholder="NEO Distance Miles"
 
                                 onChange={handleChange}
                                 name="neoDistanceKM"
@@ -317,7 +321,7 @@ React.useEffect(() => {
             </Form>
             <Container>
                 <Table responsive="md" class="table-dark" border={2} className="px-1">
-                    <PageItem>Is this a table element string</PageItem>
+                    <PageItem>NEO Data Header</PageItem>
                     {NEOElementsToRender()}                  
                 </Table>
             </Container>
