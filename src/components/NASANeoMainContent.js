@@ -173,32 +173,48 @@ React.useEffect(() => {
                 )
         }
 
-        console.log(` + + +    Going to loop through dates EVENTUALLY`)
-        let loopDate = ""
+        console.log(` + + +    Loop through dates from ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}`)
+        let loopDate
 
         // for loop neoInputState.dateNeoSearchStart to neoInputState.dateNeoSearchEnd
 
+        let loopDaysToAdd = 1
 
-        loopDate = "2022-03-01"
-        let dateNEOsArray = allNearEarthObjects[loopDate]
+        loopDate = new Date(neoInputState.dateNeoSearchStart)
+        loopDate.setDate(loopDate.getDate() + loopDaysToAdd)
+
+        let loopDateMonthString = ((loopDate.getMonth() + 1 < 10) ? "0" : "") + (loopDate.getMonth() + 1).toString()
+        let loopDayOfMonthString = ((loopDate.getDate() < 10) ? "0" : "") + (loopDate.getDate()).toString()
+
+        // 2022-01-03 === YYYY-MM-DD
+        const NEODateFormat = loopDate.getFullYear().toString() + '-' +
+            loopDateMonthString + '-' +
+            loopDayOfMonthString
+
+        console.log(`loopDate is ${loopDate.toDateString()} NEODateFormat = ${NEODateFormat}`)
+        let dateNEOsArray = allNearEarthObjects[NEODateFormat]
         let dateForLoopElements = []
 
         if (dateNEOsArray !== undefined) {
             dateElementsToRender = dateForLoopElements.concat(dateNEOsArray.map((neo) => {
+
+                let classString
+                (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
+
                 return (
-                    <Row key={neo.id} className="py-1" >
+                    <Row key={neo.id} class={(neo.is_potentially_hazardous_asteroid === true) ? "table-dark" : "text-info py-1"} >
                         <Col className="px-5" xs={8} >
                         <Card body className="mx-1 my-1" border="success">
-                            <Row className="text-success py-1" >
-                                <Col>NEO Name {neo.name}</Col>
-                                <Col>NEO Absolute Magnitude {neo.absolute_magnitude_h}</Col>
-                                <Col>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
+                            <Row className={classString} >
+                                <Col xl={3}>NEO Name {neo.name}</Col>
+                                <Col >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</Col>
+                                <Col xl={3}>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
                             </Row >
-                            <Row >
-                                <Col 
-                                className="text-success py-1">Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
-                                <Col xl={4} 
-                                className="text-primary py-1">Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
+                            <Row className={classString} >
+                                <Col xs={5}
+                                >Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
+                                <Col xs={5} 
+                                >Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
                             </Row>
                         </Card>
                         </Col>
@@ -300,7 +316,7 @@ React.useEffect(() => {
 
             </Form>
             <Container>
-                <Table striped responsive="md" variant='dark' border={2} className="px-1">
+                <Table responsive="md" class="table-dark" border={2} className="px-1">
                     <PageItem>Is this a table element string</PageItem>
                     {NEOElementsToRender()}                  
                 </Table>
