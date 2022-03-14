@@ -24,7 +24,7 @@ export default function NASANeoMainContent() {
 
 console.log("In NASANeoMainContent")
 
-React.useEffect(() => {
+    React.useEffect(() => {
             localStorage.setItem('neosArrayStorage', JSON.stringify(allNEOsArray))
         }, [allNEOsArray]
     );
@@ -45,6 +45,14 @@ React.useEffect(() => {
         return floatValue;
     }
 
+    /* 
+    Getting this error message in Console 3/10 to 3/14/22:
+    Uncaught (in promise) Error: The message port closed before a response was received.
+
+    It happens when the actor just touches the Input fields Event if not changed.  i.e. field gains focus.
+    
+    When change does happen to input field the Error doesn't occur.
+    */ 
     function handleChange(event) {
         const {name, value} = event.target
 
@@ -202,7 +210,7 @@ React.useEffect(() => {
                 (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
 
                 return (
-                    <Row key={neo.id} class={(neo.is_potentially_hazardous_asteroid === true) ? "table-dark" : "text-info py-1"} >
+                    <Row key={neo.id} className={(neo.is_potentially_hazardous_asteroid === true) ? "dark" : "text-info py-1"} >
                         <Col className="px-5" xs={8} >
                         <Card body className="mx-1 my-1" border="success">
                             <Row className={classString} >
@@ -237,10 +245,10 @@ React.useEffect(() => {
             )
         }
         else {
-            console.warn(`Returning this to Table Render <PageItem>NASA NEOs for Date ${loopDate}</PageItem>`)
+            console.warn(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${NEODateFormat}</PageItem>`)
 
             // 3/13/22 This does return proper React JSX, but when I put inside ["<PageItem>etc."] it didn't return properly.
-            dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {loopDate}</PageItem>)
+            dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {NEODateFormat}</PageItem>)
         }
 
         return dateElementsToRender
@@ -320,7 +328,7 @@ React.useEffect(() => {
 
             </Form>
             <Container>
-                <Table responsive="md" class="table-dark" border={2} className="px-1">
+                <Table responsive="md" border={2} className="px-1">
                     <PageItem>NEO Data Header</PageItem>
                     {NEOElementsToRender()}                  
                 </Table>
