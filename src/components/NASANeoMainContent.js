@@ -8,21 +8,17 @@ let initialneoInputState = {
     id: `${Date.now()}`,
     dateNeoSearchStart: Date("1/1/2021"),
     dateNeoSearchEnd: Date("1/10/2021"),
-    neoDistanceKM: 0.0,
-    neoNameStr: "",
-    neoDescription: "",
-    yagni: true
+    neoDistanceKM: 0.0
 }
 
 
 export default function NASANeoMainContent() {
 
-    const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage')) || [])
+    const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage')) 
+                                                || [] )
 
-    const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage')) || 
-    [])
-
-console.log("In NASANeoMainContent")
+    const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage'))
+                                                || [] )
 
     React.useEffect(() => {
             localStorage.setItem('neosArrayStorage', JSON.stringify(allNEOsArray))
@@ -47,6 +43,7 @@ console.log("In NASANeoMainContent")
 
     /* 
     Getting this error message in Console 3/10 to 3/14/22:
+    
     Uncaught (in promise) Error: The message port closed before a response was received.
 
     It happens when the actor just touches the Input fields Event if not changed.  i.e. field gains focus.
@@ -78,7 +75,7 @@ console.log("In NASANeoMainContent")
             return(formatedNumber)
         } else {
 
-            return("Error - $ neoDistanceKM is not number")
+            return(`Error - $ floatNumber (${floatNumber}) is not number`)
         }
     }
 
@@ -91,42 +88,17 @@ console.log("In NASANeoMainContent")
         return ( millisecondsDiff / (1000 * 60 * 60 * 24) )
     }
 
-    function printOutArrays() {
-        console.log("    function printOutArrays")
-        console.log(Date.now() + " \n\nJSON.stringify(neoInputState)")
-        console.log(JSON.stringify(neoInputState))
-    
-        console.log("\nJSON.stringify(allNEOsArray)")
-        console.log(JSON.stringify(allNEOsArray))
-        console.log()
-    }
- 
+
     async  function startNEOSearch(event) {
 
         const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${neoInputState.dateNeoSearchStart}&end_date=${neoInputState.dateNeoSearchEnd}&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja`);
 
-        console.log(response.status); // 200
-        console.log(response.statusText); // OK
-
         if (response.status === 200) {
 
+            console.log(`NASA API response.status is (${response.status})`); // 200
+            console.log(`NASA API response.statusText (${response.statusText})`); // OK
+    
             const dataNEOsFromNASA = await response.json();
-
-            console.log("About to show data {dataNEOsFromNASA}")
-            console.dir({dataNEOsFromNASA}); // show as arrow object
-            
-            // console.dir(dataNEOsFromNASA !== undefined, "NEO Data from NASA is undefined");
-
-            // console.dir(`dataNEOsFromNASA.length = ${dataNEOsFromNASA.length}`);
-            console.dir(`dataNEOsFromNASA.links = ${dataNEOsFromNASA.links}`);
-            console.log(`dataNEOsFromNASA.element_count = ${dataNEOsFromNASA.element_count}`);
-            
-            const tempNEO = dataNEOsFromNASA.near_earth_objects[neoInputState.dateNeoSearchStart]
-            // says undefined
-            console.log(`dataNEOsFromNASA.near_earth_objects[${neoInputState.dateNeoSearchStart}].length = ${tempNEO.length}`);
-
-            console.log(`next dataNEOsFromNASA.near_earth_objects[${neoInputState.dateNeoSearchStart}]`)
-            console.dir({tempNEO})
 
             setAllNEOsArray(prevAllNEOsArray => {
                 return [
@@ -138,23 +110,10 @@ console.log("In NASANeoMainContent")
             })
         }
         else {
-            console.log("NASA NEO HTTP request attempted");
-            console.log(response.text)
-            console.log(response.statusText)
+            console.warn("NASA NEO HTTP request attempted failed, here is response.text and .statusText");
+            console.warn(`(${response.text})`)
+            console.warn(`(${response.statusText})`)
         }
-
-    /*
-        setNeoInputState(prevNEOInputState => {
-            return {
-                ...prevNEOInputState,
-                id: `${Date.now()}`,
-                neoDistanceKM: 0.0,
-                neoNameStr: "",
-                neoDescription: "",
-                yagni: true
-            }
-        })
-        */
 
     }
 
@@ -168,11 +127,13 @@ console.log("In NASANeoMainContent")
     
         console.log("   IN function NEOElementsToRender")
         const allNearEarthObjects = allNEOsArray[0].near_earth_objects
-        let dateElementsToRender = []
 
+        let dateElementsToRender = []
+        
         const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
 
-        console.log(`- - -   numberOfDays between dates: ${neoInputState.dateNeoSearchStart} AND ${neoInputState.dateNeoSearchEnd} is ${numberOfDays}`)
+        console.log(`- - -   numberOfDays is ${numberOfDays} between dates: ${neoInputState.dateNeoSearchStart} AND ${neoInputState.dateNeoSearchEnd} `)
+
         if (numberOfDays < 0) {
 
             console.error("Start Date is after End Date")
@@ -182,73 +143,87 @@ console.log("In NASANeoMainContent")
         }
 
         console.log(` + + +    Loop through dates from ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}`)
-        let loopDate
 
-        // for loop neoInputState.dateNeoSearchStart to neoInputState.dateNeoSearchEnd
-
-        let loopDaysToAdd = 1
-
-        loopDate = new Date(neoInputState.dateNeoSearchStart)
-        loopDate.setDate(loopDate.getDate() + loopDaysToAdd)
-
-        let loopDateMonthString = ((loopDate.getMonth() + 1 < 10) ? "0" : "") + (loopDate.getMonth() + 1).toString()
-        let loopDayOfMonthString = ((loopDate.getDate() < 10) ? "0" : "") + (loopDate.getDate()).toString()
-
-        // 2022-01-03 === YYYY-MM-DD
-        const NEODateFormat = loopDate.getFullYear().toString() + '-' +
-            loopDateMonthString + '-' +
-            loopDayOfMonthString
-
-        console.log(`loopDate is ${loopDate.toDateString()} NEODateFormat = ${NEODateFormat}  && typeof NEODateFormat is ${typeof NEODateFormat}`)
-        let dateNEOsArray = allNearEarthObjects[NEODateFormat]
+        let loopDate = ""
         let dateForLoopElements = []
 
-        if (dateNEOsArray !== undefined) {
-            dateElementsToRender = dateForLoopElements.concat(dateNEOsArray.map((neo) => {
+        for (let loopDaysToAdd = 0; loopDaysToAdd <= numberOfDays; loopDaysToAdd++) {
 
-                let classString
-                (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
+            /* 
+                new Date() is returning GMT time if I pass in "YYYY-MM-DD"  which ends up being -7 hrs for current Pacific Time Zone
+                and ends up being the day before.  If I pass in Date("2022-03-29")
+                        Date() returns "Mon Mar 28 2022 17:00:00 GMT-0700 (Pacific Daylight Time)"
+                If I pass in Date("YYYY-MM-DD 0:00") then 
+                        Date() returns "Tue Mar 29 2022 00:00:00 GMT-0700 (Pacific Daylight Time)"
+            */
+            loopDate = new Date(neoInputState.dateNeoSearchStart + " 0:00")
 
-                return (
-                    <Row key={neo.id} className={(neo.is_potentially_hazardous_asteroid === true) ? "dark" : "text-info py-1"} >
-                        <Col className="px-5" xs={8} >
-                        <Card body className="mx-1 my-1" border="success">
-                            <Row className={classString} >
-                                <Col xl={3}>NEO Name {neo.name}</Col>
-                                <Col >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</Col>
-                                <Col xl={3}>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
-                            </Row >
-                            <Row className={classString} >
-                                <Col xs={5}
-                                >Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
-                                <Col xs={5} 
-                                >Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
-                            </Row>
-                            <Row>
-                            <Col className={classString}
-                                >Miss Distance from {neo.close_approach_data[0].orbiting_body}: {formatFloatToString(+(neo.close_approach_data[0].miss_distance.miles))} Miles</Col>
-                            </Row>
-                        </Card>
-                        </Col>
-                        <Col className="pt-5" >
-                            <Button
-                                onClick={() => getNeoDetails(neo.links.self)}
-                                key={neo.id}
-                                variant="outline-danger"
-                                className=""
-                                >Get NEO reference Info<br />{neo.name}
-                            </Button>
-                        </Col>
-                    </Row>
+            loopDate.setDate(loopDate.getDate() + (loopDaysToAdd))
+
+            let loopDateMonthString = ((loopDate.getMonth() + 1 < 10) ? "0" : "") + (loopDate.getMonth() + 1).toString()
+            let loopDayOfMonthString = ((loopDate.getDate() < 10) ? "0" : "") + (loopDate.getDate()).toString()
+
+            // 2022-01-03 === YYYY-MM-DD
+            const NEODateFormat = loopDate.getFullYear().toString() + '-' +
+                loopDateMonthString + '-' +
+                loopDayOfMonthString
+
+            console.log(`\n\n  IN FOR LOOP loopDate is (${loopDate.toDateString()}) NEODateFormat = (${NEODateFormat})`)
+            let dateNEOsArray = allNearEarthObjects[NEODateFormat]
+
+            if (dateNEOsArray !== undefined) {
+                console.log("                 (dateNEOsArray !== undefined)")
+
+                
+                dateElementsToRender = dateForLoopElements.concat(dateNEOsArray.map((neo) => {
+
+                    let classString
+                    (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
+
+                    return (
+                        <Row key={neo.id} className={(neo.is_potentially_hazardous_asteroid === true) ? "dark" : "text-info py-1"} >
+                            <Col className="px-5" xs={8} >
+                            <Card body className="mx-1 my-1" border="success">
+                                <Row className={classString} >
+                                    <Col xl={3}>NEO Name {neo.name}</Col>
+                                    <Col >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</Col>
+                                    <Col xl={3}>Diameter {formatFloatToString(neo.estimated_diameter.feet.estimated_diameter_max)} Feet</Col>
+                                </Row >
+                                <Row className={classString} >
+                                    <Col xs={5}
+                                    >Closest Approach on: {neo.close_approach_data[0].close_approach_date}</Col>
+                                    <Col xs={5} 
+                                    >Relative Velocity: {formatFloatToString(+(neo.close_approach_data[0].relative_velocity.miles_per_hour))} Mi/Hr</Col>
+                                </Row>
+                                <Row>
+                                <Col className={classString}
+                                    >Miss Distance from {neo.close_approach_data[0].orbiting_body}: {formatFloatToString(+(neo.close_approach_data[0].miss_distance.miles))} Miles</Col>
+                                </Row>
+                            </Card>
+                            </Col>
+                            <Col className="pt-5" >
+                                <Button
+                                    onClick={() => getNeoDetails(neo.links.self)}
+                                    key={neo.id}
+                                    variant="outline-danger"
+                                    className=""
+                                    >Get NEO reference Info<br />{neo.name}
+                                </Button>
+                            </Col>
+                        </Row>
+                    )
+                })
                 )
-            })
-            )
-        }
-        else {
-            console.warn(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${NEODateFormat}</PageItem>`)
+            }
+            else {
 
-            // 3/13/22 This does return proper React JSX, but when I put inside ["<PageItem>etc."] it didn't return properly.
-            dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {NEODateFormat}</PageItem>)
+                console.warn(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${NEODateFormat}</PageItem>`)
+
+                // 3/13/22 This does return proper React JSX, but when I put inside array ["<PageItem>etc."] it didn't return properly.
+                dateElementsToRender = dateForLoopElements.concat(<PageItem>No NASA NEOs for Date {NEODateFormat}</PageItem>)
+            }
+        
+            dateForLoopElements = dateElementsToRender
         }
 
         return dateElementsToRender
