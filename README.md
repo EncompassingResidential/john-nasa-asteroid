@@ -16,7 +16,7 @@ Here is getting NEOs objects via date range:
 https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-03-10&end_date=2022-03-10&api_key={API_KEY}
 
 The date range data has asteroid ID which can be used to get more data about that NEO.  Here is API call for Asteroid ID:
-https://api.nasa.gov/neo/rest/v1/neo/3313974?api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja
+https://api.nasa.gov/neo/rest/v1/neo/3313974?api_key={API_KEY}
 
 helped with Javascript FETCH commands
 Using www https://www.javascripttutorial.net/javascript-fetch-api/
