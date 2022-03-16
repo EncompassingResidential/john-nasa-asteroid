@@ -4,13 +4,8 @@ import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Table } from 
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-let initialneoInputState = {
-    id: `${Date.now()}`,
-    dateNeoSearchStart: Date("1/1/2021"),
-    dateNeoSearchEnd: Date("1/10/2021"),
-    neoDistanceKM: 0.0
-}
-
+import { formatFloatToString } from './NASANeoSupportFunctions.js'
+import { getNASANeoDataViaAPI } from './NASANeoAPICalls.js'
 
 export default function NASANeoMainContent() {
 
@@ -34,21 +29,14 @@ export default function NASANeoMainContent() {
         localStorage.clear();
     }
 
-    function convert_to_float(b) {
-        // Type conversion of string to float
-        var floatValue = +(b);
-
-        return floatValue;
-    }
-
     /* 
     Getting this error message in Console 3/10 to 3/14/22:
     
-    Uncaught (in promise) Error: The message port closed before a response was received.
+    "Uncaught (in promise) Error: The message port closed before a response was received."
 
-    It happens when the actor just touches the Input fields Event if not changed.  i.e. field gains focus.
+    It happens when the actor just touches the Input fields even if the field is not changed.  i.e. the input field gains focus.
     
-    When change does happen to input field the Error doesn't occur.
+    When a change does happen to input field, i.e. a character added or deleted the Error doesn't occur.
     */ 
     function handleChange(event) {
         const {name, value} = event.target
@@ -63,174 +51,12 @@ export default function NASANeoMainContent() {
         
     }
     
-    function formatFloatToString(floatNumber) {
-
-       if (Number.isFinite(floatNumber) === true) {
-            const fixedDecimals = floatNumber.toFixed(2)
-            const formatedNumber = new Intl.NumberFormat("en-US", {
-                style: "decimal",
-                currency: "USD"
-            }).format(fixedDecimals)
-
-            return(formatedNumber)
-        } else {
-
-            return(`Error - $ floatNumber (${floatNumber}) is not number`)
-        }
-    }
-
-    function datesDiffInDays(firstDateString, secondDateString) {
-        const firstDate = new Date(firstDateString);
-        const secondDate = new Date(secondDateString);
-            
-        const millisecondsDiff = secondDate.getTime() - firstDate.getTime();
-            
-        return ( millisecondsDiff / (1000 * 60 * 60 * 24) )
-    }
-
-
-    function flattenNASANeoData(dataNEOsFromNASA) {
-
-        console.log("   IN function flattenNASANeoData(dataNEOsFromNASA)")
-
-        const allNearEarthObjectsToFlatten_0 = dataNEOsFromNASA.near_earth_objects
-
-        const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
-
-        console.log(`- - -   numberOfDays is ${numberOfDays} between dates: ${neoInputState.dateNeoSearchStart} AND ${neoInputState.dateNeoSearchEnd} `)
-
-        let flatAllNEOsArray_1 = []
-
-        if (numberOfDays < 0) {
-
-            console.error("Start Date is after End Date")
-
-            flatAllNEOsArray_1 = [
-                {
-                    id:                         9999999999,
-                    name:                       "End Date is before the Start Date",
-                    links_self:                 "https://www.linkedin.com/in/johntritz/",
-                    is_potentially_hazardous_asteroid:      false,
-                    est_diameter_feet_est_diameter_max:     0,
-                    closest_approach_date:                  "1000-01-01",
-                    closest_approach_date_full:             "1000-01-01 1:11",
-                    cad_relative_velocity_miles_per_hour:   "1.111",
-                    cad_orbiting_body:                      "Ego Self",
-                    cad_miss_distance_astronomical:         "1.0",
-                    cad_miss_distance_kilometers:           "149597870",
-                    cad_miss_distance_lunar:                "389",
-                    cad_miss_distance_miles:                "92955806"
-                }
-            ]
-            /*
-            If do return here, then need to return either Null OR Error Reason OR empty NEO structure
-            return (
-                <PageItem>Start Date {neoInputState.dateNeoSearchStart} is after End Date {neoInputState.dateNeoSearchEnd}</PageItem>
-                )
-            */
-        }
-        else {
-
-            console.log(` + + +    Loop through dates from ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}`)
-
-            let loopDate = ""
-            let flatDateForLoopNEOs_2 = []
-
-            for (let loopDaysToAdd = 0; loopDaysToAdd <= numberOfDays; loopDaysToAdd++) {
-
-                /* 
-                    new Date() is returning GMT time if I pass in "YYYY-MM-DD"  which ends up being -7 hrs for current Pacific Time Zone
-                    and ends up being the day before.  If I pass in Date("2022-03-29")
-                            Date() returns "Mon Mar 28 2022 17:00:00 GMT-0700 (Pacific Daylight Time)"
-                    If I pass in Date("YYYY-MM-DD 0:00") then 
-                            Date() returns "Tue Mar 29 2022 00:00:00 GMT-0700 (Pacific Daylight Time)"
-                */
-                loopDate = new Date(neoInputState.dateNeoSearchStart + " 0:00")
-
-                loopDate.setDate(loopDate.getDate() + loopDaysToAdd)
-
-                let loopDateMonthString = ((loopDate.getMonth() + 1 < 10) ? "0" : "") + (loopDate.getMonth() + 1).toString()
-                let loopDayOfMonthString = ((loopDate.getDate() < 10) ? "0" : "") + (loopDate.getDate()).toString()
-
-                // 2022-01-03 === YYYY-MM-DD
-                const NEODateFormat = loopDate.getFullYear().toString() + '-' +
-                    loopDateMonthString + '-' +
-                    loopDayOfMonthString
-
-                /*
-                 Array from allNEOsArray.[0].near_earth_objects["2022-03-01"][]
-                       from allNEOsArray.[0].near_earth_objects["2022-03-02"][]
-                       from allNEOsArray.[0].near_earth_objects["2022-03-03"][]
-                */
-                let flatNEOsArrayForDate_3 = allNearEarthObjectsToFlatten_0[NEODateFormat].map((neoForDate) => {
-                    return (
-                        {
-                            id:                         neoForDate.id,
-                            name:                       neoForDate.name,
-                            links_self:                 neoForDate.links.self,
-                            is_potentially_hazardous_asteroid:      neoForDate.is_potentially_hazardous_asteroid,
-                            est_diameter_feet_est_diameter_max:     neoForDate.estimated_diameter.feet.estimated_diameter_max,
-                            closest_approach_date:                  neoForDate.close_approach_data[0].close_approach_date,
-                            closest_approach_date_full:             neoForDate.close_approach_data[0].close_approach_date_full,
-                            cad_relative_velocity_miles_per_hour:   neoForDate.close_approach_data[0].relative_velocity.miles_per_hour,
-                            cad_orbiting_body:                      neoForDate.close_approach_data[0].orbiting_body,
-                            cad_miss_distance_astronomical:         neoForDate.close_approach_data[0].miss_distance.astronomical,
-                            cad_miss_distance_kilometers:           neoForDate.close_approach_data[0].miss_distance.kilometers,
-                            cad_miss_distance_lunar:                neoForDate.close_approach_data[0].miss_distance.lunar,
-                            cad_miss_distance_miles:                neoForDate.close_approach_data[0].miss_distance.miles
-                        }
-                    )
-    
-                })  // .map
-
-                flatAllNEOsArray_1 = flatDateForLoopNEOs_2.concat(flatNEOsArrayForDate_3)
-
-                flatDateForLoopNEOs_2 = flatAllNEOsArray_1
-
-            } // for
-
-        }  // else number Of Days >= 0
-        
-        return flatAllNEOsArray_1
-
-    }  // function flattenNASANeoData
-
-
-    async function getNASANeoDataViaAPI() {
-
-        const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${neoInputState.dateNeoSearchStart}&end_date=${neoInputState.dateNeoSearchEnd}&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja`);
-
-        if (response.status === 200) {
-
-            console.log(`NASA API response.status is (${response.status})`); // 200
-            console.log(`NASA API response.statusText (${response.statusText})`); // OK
-    
-            const dataNEOsFromNASA = await response.json();
-
-            // Now it is array of all the dataNEOsFromNASA[0].near_earth_objects
-            const flattenedNEOData = flattenNASANeoData(dataNEOsFromNASA)
-
-            setAllNEOsArray(prevAllNEOsArray => {
-                return { 
-                    links               : dataNEOsFromNASA.links,
-                    element_count       : dataNEOsFromNASA.element_count,
-                    near_earth_objects  : flattenedNEOData
-                }
-            })
-        }
-        else {
-            console.warn(`NASA NEO HTTP request attempted failed Status Code (${response.status}), here is response.type and .statusText`);
-            console.warn(`(${response.type})`)
-            console.warn(`(${response.statusText})`)
-        }
-
-    }
 
     function startNEOSearch(event) {
 
         // Start Spinning Solar System the infamous "Please Wait" gif.
 
-        getNASANeoDataViaAPI()
+        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray)
 
     }
 
@@ -248,22 +74,6 @@ export default function NASANeoMainContent() {
     
         console.log("   IN function NEOElementsToRender")
 
-        /*
-            id:                         neoForDate.id,
-            name:                       neoForDate.name,
-            links_self:                 neoForDate.links.self,
-            is_potentially_hazardous_asteroid:      neoForDate.is_potentially_hazardous_asteroid,
-            est_diameter_feet_est_diameter_max:     neoForDate.estimated_diameter.feet.estimated_diameter_max,
-            closest_approach_date:                  neoForDate.close_approach_data[0].close_approach_date,
-            closest_approach_date_full:             neoForDate.close_approach_data[0].close_approach_date_full,
-            cad_relative_velocity_miles_per_hour:   neoForDate.close_approach_data[0].relative_velocity.miles_per_hour,
-            cad_orbiting_body:                      neoForDate.close_approach_data[0].orbiting_body,
-            cad_miss_distance_astronomical:         neoForDate.close_approach_data[0].miss_distance.astronomical,
-            cad_miss_distance_kilometers:           neoForDate.close_approach_data[0].miss_distance.kilometers,
-            cad_miss_distance_lunar:                neoForDate.close_approach_data[0].miss_distance.lunar,
-            cad_miss_distance_miles:                neoForDate.close_approach_data[0].miss_distance.miles
-
-        */
         const dateNEOsArray = allNEOsArray.near_earth_objects
 
         console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
