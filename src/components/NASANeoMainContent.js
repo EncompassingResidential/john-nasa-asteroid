@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Table } from 'react-bootstrap'
+import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Table } from 'react-bootstrap'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -76,23 +76,23 @@ export default function NASANeoMainContent() {
 
         const dateNEOsArray = allNEOsArray.near_earth_objects
 
-        console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
-
         let allNEOsSortedToRender = []
-
+        
         if (dateNEOsArray !== undefined) {
             console.log("                 (dateNEOsArray !== undefined)")
-
+            
+            console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
+    
             dateNEOsArray.sort((a, b) => {
                 const a_closest_approach_date_full = new Date(a.closest_approach_date_full)
                 const b_closest_approach_date_full = new Date(b.closest_approach_date_full)
-
+                
                 // Sort by Closest Approach Date Full (Full has military time of day)
                 return a_closest_approach_date_full.getTime() - b_closest_approach_date_full.getTime()
                 
                 // Sort by Miss Distance in Miles
                 // return a.cad_miss_distance_miles - b.cad_miss_distance_miles
-
+                
                 // Sort by Relative Velocity in Miles per hour
                 // return a.cad_relative_velocity_miles_per_hour - b.cad_relative_velocity_miles_per_hour
 
@@ -151,6 +151,14 @@ export default function NASANeoMainContent() {
         return allNEOsSortedToRender
 
     }
+
+    /* Spinner code
+    I think needs useState variable
+    - www options
+    : CSS display:'none' https://til.hashrocket.com/posts/9d7e8e1a65-invisible-components-in-react-native
+    : this.setState {isActive: true} https://reactgo.com/react-show-hide-elements/
+    
+    */
     
     return (
         <Card body className="mx-1 my-1" border="success">
@@ -211,7 +219,15 @@ export default function NASANeoMainContent() {
                     className="mx-5 p-2 my-1"
                     spacing="15"
                 >
-                    Search for NEOs
+                    <Spinner
+                    display="none"
+                    as="span"
+                    animation="grow"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                    />
+                    Search 3 for NEOs
                 </Button>
                 <Button
                     onClick={clearLocalStorage}
