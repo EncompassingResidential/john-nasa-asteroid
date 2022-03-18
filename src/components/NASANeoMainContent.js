@@ -106,36 +106,24 @@ export default function NASANeoMainContent() {
                 (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
 
                 return (
-                    <Row key={neo.id} className={(neo.is_potentially_hazardous_asteroid === true) ? "dark" : "text-info py-1"} >
-                        <Col className="px-5" xs={8} >
-                        <Card body className="mx-1 my-1" border="success">
-                            <Row className={classString} >
-                                <Col xl={3}>NEO Name {neo.name}</Col>
-                                <Col >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</Col>
-                                <Col xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</Col>
-                            </Row >
-                            <Row className={classString} >
-                                <Col xs={5}
-                                >Closest Approach on: {neo.closest_approach_date_full}</Col>
-                                <Col xs={5} 
-                                >Relative Velocity: {formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</Col>
-                            </Row>
-                            <Row>
-                            <Col className={classString}
-                                >Miss Distance from {neo.cad_orbiting_body}: {formatFloatToString(+(neo.cad_miss_distance_miles))} Miles</Col>
-                            </Row>
-                        </Card>
-                        </Col>
-                        <Col className="pt-5" >
-                            <Button
+                    <tr>
+                        <td>{neo.id}</td>
+                        <td xl={3}>{neo.name}</td>
+                        <td >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</td>
+                        <td xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
+                        <td xs={5}>{neo.closest_approach_date_full}</td>
+                        <td xs={5}>{formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</td>
+                        <td className={classString}>{neo.cad_orbiting_body} by {formatFloatToString(+(neo.cad_miss_distance_miles))} Miles</td>
+                        <td className="pt-1" >
+                            <button
                                 onClick={() => getNeoDetails(neo.links_self)}
                                 key={neo.id}
                                 variant="outline-danger"
                                 className=""
-                                >Get NEO reference Info<br />{neo.name}
-                            </Button>
-                        </Col>
-                    </Row>
+                                >NEO Details
+                            </button>
+                        </td>
+                    </tr>
                 )
             })
 
@@ -241,9 +229,22 @@ export default function NASANeoMainContent() {
 
             </Form>
             <Container>
-                <Table responsive="md" border={2} className="px-1">
-                    <PageItem>NEO Data Header</PageItem>
-                    {NEOElementsToRender()}                  
+                <Table striped bordered hover border={2} className="px-1">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>NEO Name</th>
+                            <th>Is NEO Hazardous?</th>
+                            <th>Diameter</th>
+                            <th>Closest Approach on:</th>
+                            <th>Relative Velocity:</th>
+                            <th>Distance Missed from Body:</th>
+                            <th>NEO Details</th>
+                       </tr>
+                    </thead>
+                    <tbody>
+                        {NEOElementsToRender()}
+                    </tbody>
                 </Table>
             </Container>
 
