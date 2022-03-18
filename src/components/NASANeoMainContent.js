@@ -106,13 +106,13 @@ export default function NASANeoMainContent() {
                 (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
 
                 return (
-                    <tr>
-                        <td>{neo.id}</td>
-                        <td xl={3}>{neo.name}</td>
-                        <td >{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</td>
-                        <td xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
-                        <td xs={5}>{neo.closest_approach_date_full}</td>
-                        <td xs={5}>{formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</td>
+                    <tr className={classString}>
+                        <td className={classString}>{neo.id}</td>
+                        <td className={classString} xl={3}>{neo.name}</td>
+                        <td className={classString}>{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</td>
+                        <td className={classString} xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
+                        <td className={classString} xs={5}>{neo.closest_approach_date_full}</td>
+                        <td className={classString} xs={5}>{formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</td>
                         <td className={classString}>{neo.cad_orbiting_body} by {formatFloatToString(+(neo.cad_miss_distance_miles))} Miles</td>
                         <td className="pt-1" >
                             <button
@@ -232,7 +232,7 @@ export default function NASANeoMainContent() {
                 <Table striped bordered hover border={2} className="px-1">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>NEO ID</th>
                             <th>NEO Name</th>
                             <th>Is NEO Hazardous?</th>
                             <th>Diameter</th>
