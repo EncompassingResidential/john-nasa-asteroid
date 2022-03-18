@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Table } from 'react-bootstrap'
+// import { usePagination } from '@table-library/react-table-library/pagination'
+// import { useTable } from 'react-table'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -9,11 +11,17 @@ import { getNASANeoDataViaAPI } from './NASANeoAPICalls.js'
 
 export default function NASANeoMainContent() {
 
-    const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage')) 
-                                                || [] )
+    const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage'))                                                || [] )
 
     const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage'))
                                                 || [] )
+
+    const [errorMessage, setErrorMessage] = React.useState(
+        {
+            responseStatus:     200,
+            responseType:       "",
+            responseStatusText: ""
+        })
 
     React.useEffect(() => {
             localStorage.setItem('neosArrayStorage', JSON.stringify(allNEOsArray))
@@ -29,15 +37,15 @@ export default function NASANeoMainContent() {
         localStorage.clear();
     }
 
-    /* 
+    /*
     Getting this error message in Console 3/10 to 3/14/22:
-    
+
     "Uncaught (in promise) Error: The message port closed before a response was received."
 
     It happens when the actor just touches the Input fields even if the field is not changed.  i.e. the input field gains focus.
-    
+
     When a change does happen to input field, i.e. a character added or deleted the Error doesn't occur.
-    */ 
+    */
     function handleChange(event) {
         const {name, value} = event.target
 
@@ -48,15 +56,15 @@ export default function NASANeoMainContent() {
                 [name]: value
             }
         })
-        
+
     }
-    
+
 
     function startNEOSearch(event) {
 
         // Start Spinning Solar System the infamous "Please Wait" gif.
 
-        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray)
+        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setErrorMessage)
 
     }
 
@@ -66,40 +74,44 @@ export default function NASANeoMainContent() {
 
     }
 
-
-        // Only show top 10 results                
-                
-
+        // Only show top 10 results
+/*    const pagination = usePagination(allNEOsArray, {
+        state: {
+            page: 0,
+            size: 2,
+        },
+        })
+*/
     function NEOElementsToRender() {
-    
+
         console.log("   IN function NEOElementsToRender")
 
         const dateNEOsArray = allNEOsArray.near_earth_objects
 
         let allNEOsSortedToRender = []
-        
+
         if (dateNEOsArray !== undefined) {
             console.log("                 (dateNEOsArray !== undefined)")
-            
+
             console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
-    
+
             dateNEOsArray.sort((a, b) => {
                 const a_closest_approach_date_full = new Date(a.closest_approach_date_full)
                 const b_closest_approach_date_full = new Date(b.closest_approach_date_full)
-                
+
                 // Sort by Closest Approach Date Full (Full has military time of day)
                 return a_closest_approach_date_full.getTime() - b_closest_approach_date_full.getTime()
-                
+
                 // Sort by Miss Distance in Miles
                 // return a.cad_miss_distance_miles - b.cad_miss_distance_miles
-                
+
                 // Sort by Relative Velocity in Miles per hour
                 // return a.cad_relative_velocity_miles_per_hour - b.cad_relative_velocity_miles_per_hour
 
                 // Sort by Diameter Max in Feet
                 // return a.est_diameter_feet_est_diameter_max - b.est_diameter_feet_est_diameter_max
             })
-    
+
             allNEOsSortedToRender = dateNEOsArray.map((neo) => {
 
                 let classString
@@ -145,13 +157,13 @@ export default function NASANeoMainContent() {
     - www options
     : CSS display:'none' https://til.hashrocket.com/posts/9d7e8e1a65-invisible-components-in-react-native
     : this.setState {isActive: true} https://reactgo.com/react-show-hide-elements/
-    
+
     */
-    
+
     return (
         <Card body className="mx-1 my-1" border="success">
-            <Form 
-                noValidate 
+            <Form
+                noValidate
                 className="mx-2 p-2 border"
             >
                 <Row>
@@ -161,11 +173,11 @@ export default function NASANeoMainContent() {
                             <Form.Control
                                 type="date"
                                 placeholder="NEO Start Date"
-                                
+
                                 onChange={handleChange}
                                 value={neoInputState.dateNeoSearchStart} // This "value={}" is how to impliment React controlled components
                                 name="dateNeoSearchStart"
-                                
+
                                 />
                         </Form.Group>
                     </Col>
@@ -175,11 +187,11 @@ export default function NASANeoMainContent() {
                             <Form.Control
                                 type="date"
                                 placeholder="NEO End Date"
-                                
+
                                 onChange={handleChange}
                                 value={neoInputState.dateNeoSearchEnd} // This "value={}" is how to impliment React controlled components
                                 name="dateNeoSearchEnd"
-                                
+
                                 />
                         </Form.Group>
                     </Col>
@@ -197,35 +209,39 @@ export default function NASANeoMainContent() {
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row>
-                </Row>
-                
-                <Button
-                    onClick={startNEOSearch}
-                    size="sm"
-                    variant="primary"
-                    className="mx-5 p-2 my-1"
-                    spacing="15"
-                >
-                    <Spinner
-                    display="none"
-                    as="span"
-                    animation="grow"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    />
-                    Search 3 for NEOs
-                </Button>
-                <Button
-                    onClick={clearLocalStorage}
-                    size="sm"
-                    variant="primary"
-                    className="mx-5 p-2 my-1"
-                    spacing="15"
-                >
-                    Clear Local Storage
-                </Button>
+
+                <div class="d-flex flex-row">
+                    
+                    <Button
+                        onClick={startNEOSearch}
+                        size="sm"
+                        variant="primary"
+                        className="mx-5 p-2 my-1"
+                        spacing="15"
+                    >
+                        <Spinner
+                        display="none"
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        />
+                        Search 3 for NEOs
+                    </Button>
+                    <Button
+                        onClick={clearLocalStorage}
+                        size="sm"
+                        variant="primary"
+                        className="mx-5 p-2 my-1"
+                        spacing="15"
+                    >
+                        Clear Local Storage
+                    </Button>
+                    { (errorMessage.responseStatus === 400 ) &&
+                       <h3 className="error"> API Error Message ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3> }
+                    
+                </div>
 
             </Form>
             <Container>

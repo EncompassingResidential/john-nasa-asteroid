@@ -108,7 +108,7 @@ export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 }  // function flattenNASANeoData
 
 
-export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray) {
+export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setErrorMessage) {
 
     const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${neoInputState.dateNeoSearchStart}&end_date=${neoInputState.dateNeoSearchEnd}&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja`);
 
@@ -134,6 +134,17 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray) {
         console.warn(`NASA NEO HTTP request attempted failed Status Code (${response.status}), here is response.type and .statusText`);
         console.warn(`(${response.type})`)
         console.warn(`(${response.statusText})`)
+
     }
+
+    setErrorMessage(prevErrorMessage => {
+        console.log(`response Object`)
+        console.dir({response})
+        return { 
+            responseStatus:     response.status,
+            responseType:       response.type,
+            responseStatusText: response.statusText + "Really Long error message that would be here"
+        }
+    })
 
 }
