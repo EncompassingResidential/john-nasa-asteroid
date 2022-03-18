@@ -143,7 +143,7 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setEr
         return { 
             responseStatus:     response.status,
             responseType:       response.type,
-            responseStatusText: response.statusText + "Really Long error message that would be here"
+            responseStatusText: response.statusText
         }
     })
 

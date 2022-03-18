@@ -82,19 +82,22 @@ export default function NASANeoMainContent() {
 
     }
 
-        // Only show top 10 results
-/*    const pagination = usePagination(allNEOsArray, {
+    /*    const pagination = usePagination(allNEOsArray, {
         state: {
             page: 0,
             size: 2,
         },
-        })
-*/
+    })
+    */
+
+    // Only show top 10 results
+    // Pagination is part of this
+
     function NEOElementsToRender() {
 
         console.log("   IN function NEOElementsToRender")
 
-        const dateNEOsArray = allNEOsArray.near_earth_objects
+        const dateNEOsArray = allNEOsArray.near_earth_objects.slice(0, 10)
 
         let allNEOsSortedToRender = []
 
@@ -247,7 +250,7 @@ export default function NASANeoMainContent() {
                         Clear Local Storage
                     </Button>
                     { (errorMessage.responseStatus === 400 ) &&
-                       <h3 className="error"> API Error Message ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3> }
+                       <h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3> }
                     
                 </div>
 
