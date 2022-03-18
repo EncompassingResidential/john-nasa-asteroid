@@ -57,6 +57,14 @@ export default function NASANeoMainContent() {
             }
         })
 
+        setErrorMessage(prevErrorMessage => {
+            return { 
+                responseStatus:     200,
+                responseType:       "",
+                responseStatusText: ""
+            }
+        })
+    
     }
 
 
