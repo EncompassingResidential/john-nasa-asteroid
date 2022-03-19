@@ -6,8 +6,12 @@ import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Tabl
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-import { formatFloatToString } from './NASANeoSupportFunctions.js'
+import { formatFloatToString, sortNEOArray } from './NASANeoSupportFunctions.js'
 import { getNASANeoDataViaAPI } from './NASANeoAPICalls.js'
+
+import sort_up_arrow from '../images/Up_Green_Arrow.jpg'
+import sort_down_arrow from '../images/Down_Red_Arrow.jpg'
+
 
 export default function NASANeoMainContent() {
 
@@ -15,6 +19,10 @@ export default function NASANeoMainContent() {
 
     const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage'))
                                                 || [] )
+
+    const [sortColumn, setSortColumn] = React.useState("closest_approach_date_full")
+
+    const [isSortAscending, setIsSortAscending] = React.useState(true)
 
     const [errorMessage, setErrorMessage] = React.useState(
         {
@@ -67,7 +75,22 @@ export default function NASANeoMainContent() {
     
     }
 
+    function handleSortingChange(tableColumnName) {
 
+        console.log(`   ---   handleSortingChange tableColumnName ${tableColumnName}`)
+
+        setSortColumn(prevSortColumn => {
+            console.log("   ---   setSortColumn")
+            return tableColumnName
+        })
+
+        setIsSortAscending(prevIsSortAscending => {
+            console.log("   ---   setIsSortAscending")
+            return (prevIsSortAscending) ? false : true
+        })
+    }
+
+    
     function startNEOSearch(event) {
 
         // Start Spinning Solar System the infamous "Please Wait" gif.
@@ -97,7 +120,10 @@ export default function NASANeoMainContent() {
 
         console.log("   IN function NEOElementsToRender")
 
+        // Get the 1st 10 rows
         const dateNEOsArray = allNEOsArray.near_earth_objects.slice(0, 10)
+
+        // Of course filter could be used here too...
 
         let allNEOsSortedToRender = []
 
@@ -106,22 +132,7 @@ export default function NASANeoMainContent() {
 
             console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
 
-            dateNEOsArray.sort((a, b) => {
-                const a_closest_approach_date_full = new Date(a.closest_approach_date_full)
-                const b_closest_approach_date_full = new Date(b.closest_approach_date_full)
-
-                // Sort by Closest Approach Date Full (Full has military time of day)
-                return a_closest_approach_date_full.getTime() - b_closest_approach_date_full.getTime()
-
-                // Sort by Miss Distance in Miles
-                // return a.cad_miss_distance_miles - b.cad_miss_distance_miles
-
-                // Sort by Relative Velocity in Miles per hour
-                // return a.cad_relative_velocity_miles_per_hour - b.cad_relative_velocity_miles_per_hour
-
-                // Sort by Diameter Max in Feet
-                // return a.est_diameter_feet_est_diameter_max - b.est_diameter_feet_est_diameter_max
-            })
+            sortNEOArray(dateNEOsArray, sortColumn)
 
             allNEOsSortedToRender = dateNEOsArray.map((neo) => {
 
@@ -260,15 +271,36 @@ export default function NASANeoMainContent() {
                     <thead>
                         <tr>
                             <th>NEO ID</th>
-                            <th>NEO Name</th>
+                            <th><div class="d-flex flex-row">NEO Name:<button
+                                onClick={() => handleSortingChange("name")}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><img className="sort--image" src={(sortColumn === "name") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
                             <th>Is NEO Hazardous?</th>
-                            <th>Diameter</th>
-                            <th>Closest Approach on:</th>
-                            <th>Relative Velocity:</th>
-                            <th>Distance Missed from Body:</th>
+                            <th><div class="d-flex flex-row">Diameter:<button
+                                onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><img className="sort--image" src={(sortColumn === "est_diameter_feet_est_diameter_max") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
+                            <th><div class="d-flex flex-row">Closest Approach on:<button
+                                onClick={() => handleSortingChange("closest_approach_date_full")}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><img className="sort--image" src={(sortColumn === "closest_approach_date_full") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
+                            <th><div class="d-flex flex-row">Relative Velocity:<button
+                                onClick={() => handleSortingChange("cad_relative_velocity_miles_per_hour")}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><img className="sort--image" src={(sortColumn === "cad_relative_velocity_miles_per_hour") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
+                            <th><div class="d-flex flex-row">Distance Missed from Body:<button
+                                onClick={() => handleSortingChange("cad_miss_distance_miles")}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><img className="sort--image" src={(sortColumn === "cad_miss_distance_miles") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
                             <th>NEO Details</th>
                        </tr>
                     </thead>
+
                     <tbody>
                         {NEOElementsToRender()}
                     </tbody>

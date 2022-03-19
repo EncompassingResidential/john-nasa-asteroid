@@ -37,3 +37,17 @@
     font-size: 0.75rem;
     font-weight: 500;
 }
+
+.table--header {
+    background-color: inherit;
+    border: none;
+    padding: 1px
+}
+
+.sort--image {
+    max-width: 20%;
+    min-width: 10%;
+    border-radius: 25px;
+    border: 2px solid blue;
+    padding: 2px
+}
