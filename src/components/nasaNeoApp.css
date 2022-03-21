@@ -13,7 +13,7 @@
     background-size: 100vh;
 }
 
-.expense--header {
+.nasa--header {
     display: flex;
     align-items: center;
     height: 95px;
@@ -25,7 +25,7 @@
 .header--image {
     height: 120%;
     margin-right: 6px;
-    border-radius: 50px;
+    border-radius: 20px;
 }
 
 .header--title {
@@ -45,7 +45,7 @@
 }
 
 .sort--image {
-    max-width: 20%;
+    max-width: 30%;
     min-width: 10%;
     border-radius: 25px;
     border: 2px solid blue;

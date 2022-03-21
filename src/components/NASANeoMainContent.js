@@ -120,10 +120,9 @@ export default function NASANeoMainContent() {
 
         console.log("   IN function NEOElementsToRender")
 
-        // Get the 1st 10 rows
-        const dateNEOsArray = allNEOsArray.near_earth_objects.slice(0, 10)
-
         // Of course filter could be used here too...
+
+        const dateNEOsArray = allNEOsArray.near_earth_objects
 
         let allNEOsSortedToRender = []
 
@@ -134,7 +133,10 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            allNEOsSortedToRender = dateNEOsArray.map((neo) => {
+            // Get the 1st 10 rows
+            const dateNEOsArraySliced = dateNEOsArray.slice(0, 10)
+
+            allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
                 let classString
                 (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
@@ -249,7 +251,7 @@ export default function NASANeoMainContent() {
                         role="status"
                         aria-hidden="true"
                         />
-                        Search 3 for NEOs
+                        Search for NEOs
                     </Button>
                     <Button
                         onClick={clearLocalStorage}
