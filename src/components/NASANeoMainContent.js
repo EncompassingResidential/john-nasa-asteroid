@@ -46,11 +46,11 @@ export default function NASANeoMainContent() {
     }
 
     /*
-    Getting this error message in Console 3/10 to 3/14/22:
+    Getting this error message in the Chrome Console 3/10 to 3/22/22:
 
     "Uncaught (in promise) Error: The message port closed before a response was received."
 
-    It happens when the actor just touches the Input fields even if the field is not changed.  i.e. the input field gains focus.
+    It only occurs on Chrome browser (3/22/22 99.0.4844.74 64 bit) when the actor just touches the Input fields even if the field is not changed.  i.e. the input field gains focus.
 
     When a change does happen to input field, i.e. a character added or deleted the Error doesn't occur.
     */
@@ -89,6 +89,52 @@ export default function NASANeoMainContent() {
             return (prevIsSortAscending) ? false : true
         })
     }
+
+    
+    function pageBackwardThroughRows(event) {
+            // neoInputState.neoLastRowToShow, neoInputState.neoLastRowToShow's value
+        const {name, value} = event.target
+
+        console.log("   ---   pageBackwardThroughRows")
+
+        setNeoInputState(prevNEOInputState => {
+            const currentLastRowShowingNumber = parseInt(value)
+            const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
+
+                        /*
+                            neoRowsToShow = 5
+                            50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
+                             5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
+                        */
+            console.log(`${currentLastRowShowingNumber} - (${currentLastRowShowingNumber} > ${neoRowsToShowAsInteger}) ? ${neoRowsToShowAsInteger} : 0`)
+            return {
+                ...prevNEOInputState,
+                [name]: (currentLastRowShowingNumber - (currentLastRowShowingNumber > neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0).toString()
+            }
+        })
+
+    }
+
+
+    function pageForwardThroughRows(event) {
+        const {name, value} = event.target
+
+        const currentLastRowShowingNumber = parseInt(value)
+        const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
+
+        console.log("   ---   pageForwardThroughRows")
+        setNeoInputState(prevNEOInputState => {
+
+            console.log(`${currentLastRowShowingNumber} + ${neoRowsToShowAsInteger}`)
+            
+            return {
+                ...prevNEOInputState,
+                [name]: (currentLastRowShowingNumber + neoRowsToShowAsInteger).toString
+            }
+        })
+
+    }
+
 
     function NASANeohandleErrorHandleError() {
 
@@ -147,7 +193,7 @@ export default function NASANeoMainContent() {
             sortNEOArray(dateNEOsArray, sortColumn)
 
             // Get the 1st 10 rows of sorted data
-            const dateNEOsArraySliced = dateNEOsArray.slice(0, neoInputState.neoRowsToShow)
+            const dateNEOsArraySliced = dateNEOsArray.slice(neoInputState.neoRowsStartRow, neoInputState.neoRowsToShow)
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
@@ -182,7 +228,7 @@ export default function NASANeoMainContent() {
             console.warn(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}</PageItem>`)
 
             // 3/13/22 This does return proper React JSX, but when I put inside array ["<PageItem>etc."] it didn't return properly.
-            allNEOsSortedToRender = (<PageItem>No NASA NEOs for Date {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
+            allNEOsSortedToRender = (<PageItem>Press "Search for NEOs" Button to get NASA data - {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
         }
 
         return allNEOsSortedToRender
@@ -311,7 +357,35 @@ export default function NASANeoMainContent() {
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "cad_miss_distance_miles") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                            <th>NEO Details</th>
+                            <th>NEO Details 2</th>
+                       </tr>
+                       <tr>
+                            <div class="d-flex flex-row">
+                                <Button
+                                    onClick={pageBackwardThroughRows}
+                                    name="neoLastRowToShow"
+                                    value={neoInputState.neoLastRowToShow} // This "value={}" is how to impliment React controlled components
+
+                                    size="sm"
+                                    variant="success"
+                                    className=""
+                                    spacing="15"
+                                >
+                                    Pg Back
+                                </Button>
+                                <Button
+                                    onClick={pageForwardThroughRows}
+                                    name="neoLastRowToShow"
+                                    value={neoInputState.neoLastRowToShow} // This "value={}" is how to impliment React controlled components
+
+                                    size="sm"
+                                    variant="primary"
+                                    className="mx-5 p-2 my-1"
+                                    spacing="15"
+                                >
+                                    PD Forw
+                                </Button>
+                            </div>
                        </tr>
                     </thead>
 
