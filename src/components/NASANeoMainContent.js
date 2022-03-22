@@ -90,6 +90,19 @@ export default function NASANeoMainContent() {
         })
     }
 
+    function NASANeohandleErrorHandleError() {
+
+        if (errorMessage.responseStatus === 123) {
+            return (<h3 className="error"> The Start Date {neoInputState.dateNeoSearchStart} is AFTER End Date {neoInputState.dateNeoSearchEnd}</h3>)
+        } 
+        else if (errorMessage.responseStatus === 400 ) {
+            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3>)
+        }
+        else if (errorMessage.responseStatus === -357) {
+            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3>)
+        }
+        else { return (<div></div>) }
+    }
     
     function startNEOSearch(event) {
 
@@ -133,8 +146,8 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            // Get the 1st 10 rows
-            const dateNEOsArraySliced = dateNEOsArray.slice(0, 10)
+            // Get the 1st 10 rows of sorted data
+            const dateNEOsArraySliced = dateNEOsArray.slice(0, neoInputState.neoRowsToShow)
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
@@ -220,15 +233,15 @@ export default function NASANeoMainContent() {
                         </Form.Group>
                     </Col>
                     <Col md>
-                        <Form.Group controlId="formNeoDistance">
-                            <Form.Label>NEO Distance in Miles</Form.Label>
+                        <Form.Group controlId="formNeoRowsToShow">
+                            <Form.Label>Rows of Data to Show</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="NEO Distance Miles"
+                                placeholder="Number of Rows to Display"
 
                                 onChange={handleChange}
-                                name="neoDistanceKM"
-                                value={neoInputState.neoDistanceKM} // This "value={}" is how to impliment React controlled components
+                                name="neoRowsToShow"
+                                value={neoInputState.neoRowsToShow} // This "value={}" is how to impliment React controlled components
                             />
                         </Form.Group>
                     </Col>
@@ -262,14 +275,13 @@ export default function NASANeoMainContent() {
                     >
                         Clear Local Storage
                     </Button>
-                    { (errorMessage.responseStatus === 400 ) &&
-                       <h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3> }
+                    { NASANeohandleErrorHandleError(errorMessage) }
                     
                 </div>
 
             </Form>
             <Container>
-                <Table striped bordered hover border={2} className="px-1">
+                <Table  hover border={2} className="px-1">
                     <thead>
                         <tr>
                             <th>NEO ID</th>
