@@ -212,7 +212,8 @@ export default function NASANeoMainContent() {
             sortNEOArray(dateNEOsArray, sortColumn)
 
             // Get the row + (row + neoRowsToShow) sorted data
-            const dateNEOsArraySliced = dateNEOsArray.slice(currentLastRowShowing, currentLastRowShowing + neoInputState.neoRowsToShow)
+            console.log(`dateNEOsArray.slice(${currentLastRowShowing}, ${parseInt(currentLastRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  ${currentLastRowShowing} + ${neoInputState.neoRowsToShow})`)
+            const dateNEOsArraySliced = dateNEOsArray.slice(parseInt(currentLastRowShowing), parseInt(currentLastRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
