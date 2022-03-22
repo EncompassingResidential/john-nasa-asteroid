@@ -3,17 +3,11 @@ import { datesDiffInDays } from './NASANeoSupportFunctions.js'
 
 export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 
-    console.log("   IN function flattenNASANeoData(dataNEOsFromNASA)")
-
     const allNearEarthObjectsToFlatten_0 = dataNEOsFromNASA.near_earth_objects
 
     const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
 
-    console.log(`- - -   numberOfDays is ${numberOfDays} between dates: ${neoInputState.dateNeoSearchStart} AND ${neoInputState.dateNeoSearchEnd} `)
-
     let flatAllNEOsArray = []
-
-    console.log(` + + +    Loop through dates from ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}`)
 
     let loopDate = ""
     let flatDateForLoopNEOs = []
@@ -76,7 +70,7 @@ export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 }  // function flattenNASANeoData
 
 
-export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setErrorMessage) {
+export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus) {
 
     let response = { status: 123, type: "Starting Function call getNASANeoDataViaAPI", statusText: "Just beginning"}
 
@@ -84,7 +78,6 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setEr
 
     if (numberOfDays < 0) {
 
-        console.error(`Start Date ${neoInputState.dateNeoSearchStart} is after End Date ${neoInputState.dateNeoSearchEnd}`)
         response.status = 123
         response.type = "function getNASANeoDataViaAPI() hasn't called fetech(api.nasa.gov) yet"
         response.statusText = `Start Date ${neoInputState.dateNeoSearchStart} is after End Date ${neoInputState.dateNeoSearchEnd}`
@@ -95,9 +88,6 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setEr
         response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${neoInputState.dateNeoSearchStart}&end_date=${neoInputState.dateNeoSearchEnd}&api_key=hk9dlTx899cmJzkwCDyLjxLbI1Apz2qh5IjGT3Ja`);
 
         if (response.status === 200) {
-
-            console.log(`NASA API response.status is (${response.status})`); // 200
-            console.log(`NASA API response.statusText (${response.statusText})`); // OK
 
             const dataNEOsFromNASA = await response.json();
 
@@ -121,9 +111,7 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setEr
     }
 
 
-    setErrorMessage(prevErrorMessage => {
-        console.log(`response Object`)
-        console.dir({response})
+    setNeoAppStatus(prevNeoAppStatus => {
         return { 
             responseStatus:     response.status,
             responseType:       response.type,

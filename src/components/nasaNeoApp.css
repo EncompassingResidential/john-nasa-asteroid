@@ -46,7 +46,7 @@
 
 .sort--image {
     max-width: 30%;
-    min-width: 10%;
+    min-width: 20px;
     border-radius: 25px;
     border: 2px solid blue;
     padding: 2px

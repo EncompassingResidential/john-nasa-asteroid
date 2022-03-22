@@ -26,7 +26,7 @@ export default function NASANeoMainContent() {
 
     const [currentFirstRowShowing, setCurrentFirstRowShowing] = React.useState(0)
 
-    const [errorMessage, setErrorMessage] = React.useState(
+    const [neoAppStatus, setNeoAppStatus] = React.useState(
         {
             responseStatus:     200,
             responseType:       "",
@@ -52,9 +52,8 @@ export default function NASANeoMainContent() {
 
     "Uncaught (in promise) Error: The message port closed before a response was received."
 
-    It only occurs on Chrome browser (3/22/22 99.0.4844.74 64 bit) when the actor just touches the Input fields even if the field is not changed.  i.e. the input field gains focus.
-
-    When a change does happen to input field, i.e. a character added or deleted the Error doesn't occur.
+    It only occurs on Chrome browser (3/22/22 99.0.4844.74 64 bit) when the actor touches the Input fields even if the field is not changed.
+    i.e. the input field gains focus.  When a change does happen to input field, i.e. a character added or deleted the Error doesn't occur.
     */
     function handleChange(event) {
         const {name, value} = event.target
@@ -62,11 +61,11 @@ export default function NASANeoMainContent() {
         setNeoInputState(prevNEOInputState => {
             return {
                 ...prevNEOInputState,
-                [name]: value
+                [name]: (value < 1) ? 1 : value
             }
         })
 
-        setErrorMessage(prevErrorMessage => {
+        setNeoAppStatus(prevNeoAppStatus => {
             return { 
                 responseStatus:     200,
                 responseType:       "",
@@ -137,33 +136,53 @@ export default function NASANeoMainContent() {
     }
 
 
-    function NASANeohandleErrorHandleError() {
+    function neoHandleAppStatus() {
 
-        if (errorMessage.responseStatus === 123) {
+        if (neoAppStatus.responseStatus === 123) {
             return (<h3 className="error"> The Start Date {neoInputState.dateNeoSearchStart} is AFTER End Date {neoInputState.dateNeoSearchEnd}</h3>)
         } 
-        else if (errorMessage.responseStatus === 400 ) {
-            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) 
-                        Type ({ errorMessage.responseType }) 
-                        Error Message ({ errorMessage.responseStatusText } (errorMessage.responseType === "cors") ? "This 400 cors return means that there are too many days between the Start & End" : "") </h3>)
+        else if (neoAppStatus.responseStatus === 124) {
+            return (<h3 className="information"> Enter in Start Date {neoInputState.dateNeoSearchStart} and End Date {neoInputState.dateNeoSearchEnd} then Please Press "Search for NEOs" Button.</h3>)
+        } 
+        else if (neoAppStatus.responseStatus === 400 ) {
+            return (<h5 className="error"> API Error Number ({neoAppStatus.responseStatus}) 
+                        <text> - - - </text>Type ({ neoAppStatus.responseType }) 
+                        <p>Error Message ({ neoAppStatus.responseStatusText } 
+                        {(neoAppStatus.responseType === "cors") ? "This '400 cors' usually means that there are too many days between the Start & End Date" : ""})</p>
+                        </h5>)
         }
-        else if (errorMessage.responseStatus === -357) {
-            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3>)
+
+            // responseStatus === 300 on 3/22/22 Start Search Status for "Please Wait" events
+        else if (neoAppStatus.responseStatus === 300) {
+            return (<h5 className="information"> 
+                    { neoAppStatus.responseType } 
+                    { neoAppStatus.responseStatusText } </h5>)
         }
+
         else { return (<div></div>) }
     }
     
     function startNEOSearch(event) {
 
-        setErrorMessage(prevErrorMessage => {
+        if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {
+            console.log("if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {")
+            setNeoInputState(prevNEOInputState => { 
+                return {
+                    ...prevNEOInputState,
+                    neoRowsToShow: 1
+                } 
+            })
+        }
+
+        setNeoAppStatus(prevNeoAppStatus => {
             return { 
-                responseStatus:     -357,
-                responseType:       "message",
-                responseStatusText: `Search Button -> startNEOSearch -> currentFirstRowShowing is ${currentFirstRowShowing}`
+                responseStatus:     300,
+                responseType:       "Searching  ",
+                responseStatusText: `Ringing up NASA NEO API Server - Please Wait...`
             }
         })
 
-        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setErrorMessage)
+        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus)
 
     }
 
@@ -228,7 +247,7 @@ export default function NASANeoMainContent() {
         }
         else {
 
-            console.warn(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}</PageItem>`)
+            console.log(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}</PageItem>`)
 
             // 3/13/22 This does return proper React JSX, but when I put inside array ["<PageItem>etc."] it didn't return properly.
             allNEOsSortedToRender = (<PageItem>Press "Search for NEOs" Button to get NASA data - {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
@@ -296,7 +315,7 @@ export default function NASANeoMainContent() {
                     </Col>
                 </Row>
 
-                <div class="d-flex flex-row">
+                <div className="d-flex flex-row">
                     
                     <Button
                         onClick={startNEOSearch}
@@ -305,15 +324,15 @@ export default function NASANeoMainContent() {
                         className="mx-5 p-2 my-1"
                         spacing="15"
                     >
-                        <Spinner
+                        {neoAppStatus.responseStatus === 300 && <Spinner
                         display="none"
                         as="span"
                         animation="grow"
                         size="sm"
                         role="status"
                         aria-hidden="true"
-                        />
-                        Search for NEOs
+                        /> }
+                        {(neoAppStatus.responseStatus === 300) ? "Waiting on NASA" : "Search for NEOs"}
                     </Button>
                     <Button
                         onClick={clearLocalStorage}
@@ -324,7 +343,7 @@ export default function NASANeoMainContent() {
                     >
                         Clear Local Storage
                     </Button>
-                    { NASANeohandleErrorHandleError(errorMessage) }
+                    { neoHandleAppStatus(neoAppStatus) }
                     
                 </div>
 
@@ -334,11 +353,7 @@ export default function NASANeoMainContent() {
                     <thead>
                         <tr>
                             <th>NEO ID</th>
-                            <th><div class="d-flex flex-row">NEO Name:<button
-                                onClick={() => handleSortingChange("name")}
-                                key={new Date().getMilliseconds()}
-                                className="table--header"
-                                ><img className="sort--image" src={(sortColumn === "name") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
+                            <th><div class="d-flex flex-row">NEO Name:</div></th>
                             <th>Is NEO Hazardous?</th>
                             <th><div class="d-flex flex-row">Diameter:<button
                                 onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
@@ -374,7 +389,7 @@ export default function NASANeoMainContent() {
                                     className=""
                                     spacing="15"
                                 >
-                                    Pg Back
+                                    Back {neoInputState.neoRowsToShow} Rows
                                 </Button>
                                 <Button
                                     onClick={pageForwardThroughRows}
@@ -386,7 +401,7 @@ export default function NASANeoMainContent() {
                                     className="mx-5 p-2 my-1"
                                     spacing="15"
                                 >
-                                    PD Forw
+                                    Go Forward {neoInputState.neoRowsToShow} Rows
                                 </Button>
                             </div>
                        </tr>
