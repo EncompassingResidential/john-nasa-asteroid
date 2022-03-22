@@ -24,7 +24,7 @@ export default function NASANeoMainContent() {
 
     const [isSortAscending, setIsSortAscending] = React.useState(true)
 
-    const [currentLastRowShowing, setCurrentLastRowShowing] = React.useState(0)
+    const [currentFirstRowShowing, setCurrentFirstRowShowing] = React.useState(0)
 
     const [errorMessage, setErrorMessage] = React.useState(
         {
@@ -59,7 +59,6 @@ export default function NASANeoMainContent() {
     function handleChange(event) {
         const {name, value} = event.target
 
-        console.log("   ---   handleChange")
         setNeoInputState(prevNEOInputState => {
             return {
                 ...prevNEOInputState,
@@ -79,28 +78,24 @@ export default function NASANeoMainContent() {
 
     function handleSortingChange(tableColumnName) {
 
-        console.log(`   ---   handleSortingChange tableColumnName ${tableColumnName}`)
-
         setSortColumn(prevSortColumn => {
-            console.log("   ---   setSortColumn")
             return tableColumnName
         })
 
         setIsSortAscending(prevIsSortAscending => {
-            console.log("   ---   setIsSortAscending")
             return (prevIsSortAscending) ? false : true
         })
     }
 
     
     function pageBackwardThroughRows(event) {
-            // neoInputState.neoLastRowToShow, neoInputState.neoLastRowToShow's value
+            // useState on currentFirstRowShowing PROPerty && currentFirstRowShowing's value
         const {name, value} = event.target
 
         console.log("   ---   pageBackwardThroughRows")
 
-        setCurrentLastRowShowing(prevCurrentLastRowShowing => {
-            const currentLastRowShowingNumber = parseInt(value)
+        setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
+            const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
                         /*
@@ -108,22 +103,12 @@ export default function NASANeoMainContent() {
                             50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
                              5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
                         */
-            console.log(`${currentLastRowShowingNumber} - (${currentLastRowShowingNumber} > ${neoRowsToShowAsInteger}) ? ${neoRowsToShowAsInteger} : 0`)
-
+            console.log(`${currentFirstRowShowingNumber} - (${currentFirstRowShowingNumber} >= ${neoRowsToShowAsInteger}) ? ${neoRowsToShowAsInteger} : 0`)
+            console.log(`returning (${(currentFirstRowShowingNumber - ((currentFirstRowShowingNumber >= neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0)).toString()})`)
             return (
-                (currentLastRowShowingNumber - (currentLastRowShowingNumber > neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0).toString()
+                (currentFirstRowShowingNumber - ((currentFirstRowShowingNumber >= neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0)).toString()
             )
         })
-
-        /*
-        setNeoInputState(prevNEOInputState => {
-            
-            return {
-                ...prevNEOInputState,
-                [name]: value
-            }
-        })
-        */
 
     }
 
@@ -133,13 +118,15 @@ export default function NASANeoMainContent() {
 
         console.log("   ---   pageForwardThroughRows")
 
-        setCurrentLastRowShowing(prevCurrentLastRowShowing => {
-            const currentLastRowShowingNumber = parseInt(value)
+        setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
+            const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)    
     
-            console.log(`${currentLastRowShowingNumber} + ${neoRowsToShowAsInteger}`)
-            
-            return ( (currentLastRowShowingNumber + neoRowsToShowAsInteger).toString() )
+            console.log(`${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger}`)
+                
+            return ((currentFirstRowShowingNumber + neoRowsToShowAsInteger <= allNEOsArray.element_count) ?
+             (currentFirstRowShowingNumber + neoRowsToShowAsInteger).toString() :
+              allNEOsArray.element_count - neoRowsToShowAsInteger)
         })
 
     }
@@ -161,13 +148,13 @@ export default function NASANeoMainContent() {
     
     function startNEOSearch(event) {
 
-        console.log( `Search Button -> startNEOSearch -> currentLastRowShowing is ${currentLastRowShowing}` )
+        console.log( `Search Button -> startNEOSearch -> currentFirstRowShowing is ${currentFirstRowShowing}` )
 
         setErrorMessage(prevErrorMessage => {
             return { 
                 responseStatus:     -357,
                 responseType:       "message",
-                responseStatusText: `Search Button -> startNEOSearch -> currentLastRowShowing is ${currentLastRowShowing}`
+                responseStatusText: `Search Button -> startNEOSearch -> currentFirstRowShowing is ${currentFirstRowShowing}`
             }
         })
 
@@ -196,24 +183,17 @@ export default function NASANeoMainContent() {
 
     function NEOElementsToRender() {
 
-        console.log("   IN function NEOElementsToRender")
-
-        // Of course filter could be used here too...
-
         const dateNEOsArray = allNEOsArray.near_earth_objects
 
         let allNEOsSortedToRender = []
 
         if (dateNEOsArray !== undefined) {
-            console.log("                 (dateNEOsArray !== undefined)")
-
-            console.log('\n   SORT Starting sort of NEO date via a.closest_approach_date_full.\n')
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
             // Get the row + (row + neoRowsToShow) sorted data
-            console.log(`dateNEOsArray.slice(${currentLastRowShowing}, ${parseInt(currentLastRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  ${currentLastRowShowing} + ${neoInputState.neoRowsToShow})`)
-            const dateNEOsArraySliced = dateNEOsArray.slice(parseInt(currentLastRowShowing), parseInt(currentLastRowShowing) + parseInt(neoInputState.neoRowsToShow))
+            console.log(`dateNEOsArray.slice(currentFirstRowShowing ${currentFirstRowShowing}, ${parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  currentFirstRowShowing ${currentFirstRowShowing} + neoInputState.neoRowsToShow ${neoInputState.neoRowsToShow})`)
+            const dateNEOsArraySliced = dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
@@ -383,8 +363,8 @@ export default function NASANeoMainContent() {
                             <div class="d-flex flex-row">
                                 <Button
                                     onClick={pageBackwardThroughRows}
-                                    name="currentLastRowShowing"
-                                    value={currentLastRowShowing} // This "value={}" is how to impliment React controlled components
+                                    name="currentFirstRowShowing"
+                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
 
                                     size="sm"
                                     variant="success"
@@ -395,8 +375,8 @@ export default function NASANeoMainContent() {
                                 </Button>
                                 <Button
                                     onClick={pageForwardThroughRows}
-                                    name="currentLastRowShowing"
-                                    value={currentLastRowShowing} // This "value={}" is how to impliment React controlled components
+                                    name="currentFirstRowShowing"
+                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
 
                                     size="sm"
                                     variant="primary"
