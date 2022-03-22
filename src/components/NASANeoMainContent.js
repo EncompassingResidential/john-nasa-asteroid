@@ -24,6 +24,8 @@ export default function NASANeoMainContent() {
 
     const [isSortAscending, setIsSortAscending] = React.useState(true)
 
+    const [currentLastRowShowing, setCurrentLastRowShowing] = React.useState(0)
+
     const [errorMessage, setErrorMessage] = React.useState(
         {
             responseStatus:     200,
@@ -97,7 +99,7 @@ export default function NASANeoMainContent() {
 
         console.log("   ---   pageBackwardThroughRows")
 
-        setNeoInputState(prevNEOInputState => {
+        setCurrentLastRowShowing(prevCurrentLastRowShowing => {
             const currentLastRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
@@ -107,11 +109,21 @@ export default function NASANeoMainContent() {
                              5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
                         */
             console.log(`${currentLastRowShowingNumber} - (${currentLastRowShowingNumber} > ${neoRowsToShowAsInteger}) ? ${neoRowsToShowAsInteger} : 0`)
+
+            return (
+                (currentLastRowShowingNumber - (currentLastRowShowingNumber > neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0).toString()
+            )
+        })
+
+        /*
+        setNeoInputState(prevNEOInputState => {
+            
             return {
                 ...prevNEOInputState,
-                [name]: (currentLastRowShowingNumber - (currentLastRowShowingNumber > neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0).toString()
+                [name]: value
             }
         })
+        */
 
     }
 
@@ -119,18 +131,15 @@ export default function NASANeoMainContent() {
     function pageForwardThroughRows(event) {
         const {name, value} = event.target
 
-        const currentLastRowShowingNumber = parseInt(value)
-        const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
-
         console.log("   ---   pageForwardThroughRows")
-        setNeoInputState(prevNEOInputState => {
 
+        setCurrentLastRowShowing(prevCurrentLastRowShowing => {
+            const currentLastRowShowingNumber = parseInt(value)
+            const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)    
+    
             console.log(`${currentLastRowShowingNumber} + ${neoRowsToShowAsInteger}`)
             
-            return {
-                ...prevNEOInputState,
-                [name]: (currentLastRowShowingNumber + neoRowsToShowAsInteger).toString
-            }
+            return ( (currentLastRowShowingNumber + neoRowsToShowAsInteger).toString() )
         })
 
     }
@@ -152,7 +161,15 @@ export default function NASANeoMainContent() {
     
     function startNEOSearch(event) {
 
-        // Start Spinning Solar System the infamous "Please Wait" gif.
+        console.log( `Search Button -> startNEOSearch -> currentLastRowShowing is ${currentLastRowShowing}` )
+
+        setErrorMessage(prevErrorMessage => {
+            return { 
+                responseStatus:     -357,
+                responseType:       "message",
+                responseStatusText: `Search Button -> startNEOSearch -> currentLastRowShowing is ${currentLastRowShowing}`
+            }
+        })
 
         getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setErrorMessage)
 
@@ -163,6 +180,8 @@ export default function NASANeoMainContent() {
         console.dir(props)
 
     }
+
+    // Start Spinning Solar System the infamous "Please Wait" gif.
 
     /*    const pagination = usePagination(allNEOsArray, {
         state: {
@@ -192,8 +211,8 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            // Get the 1st 10 rows of sorted data
-            const dateNEOsArraySliced = dateNEOsArray.slice(neoInputState.neoRowsStartRow, neoInputState.neoRowsToShow)
+            // Get the row + (row + neoRowsToShow) sorted data
+            const dateNEOsArraySliced = dateNEOsArray.slice(currentLastRowShowing, currentLastRowShowing + neoInputState.neoRowsToShow)
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
@@ -363,8 +382,8 @@ export default function NASANeoMainContent() {
                             <div class="d-flex flex-row">
                                 <Button
                                     onClick={pageBackwardThroughRows}
-                                    name="neoLastRowToShow"
-                                    value={neoInputState.neoLastRowToShow} // This "value={}" is how to impliment React controlled components
+                                    name="currentLastRowShowing"
+                                    value={currentLastRowShowing} // This "value={}" is how to impliment React controlled components
 
                                     size="sm"
                                     variant="success"
@@ -375,8 +394,8 @@ export default function NASANeoMainContent() {
                                 </Button>
                                 <Button
                                     onClick={pageForwardThroughRows}
-                                    name="neoLastRowToShow"
-                                    value={neoInputState.neoLastRowToShow} // This "value={}" is how to impliment React controlled components
+                                    name="currentLastRowShowing"
+                                    value={currentLastRowShowing} // This "value={}" is how to impliment React controlled components
 
                                     size="sm"
                                     variant="primary"
