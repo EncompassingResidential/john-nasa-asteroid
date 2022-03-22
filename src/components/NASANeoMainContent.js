@@ -92,22 +92,31 @@ export default function NASANeoMainContent() {
             // useState on currentFirstRowShowing PROPerty && currentFirstRowShowing's value
         const {name, value} = event.target
 
-        console.log("   ---   pageBackwardThroughRows")
-
         setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
-                        /*
-                            neoRowsToShow = 5
-                            50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
-                             5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
-                        */
-            console.log(`${currentFirstRowShowingNumber} - (${currentFirstRowShowingNumber} >= ${neoRowsToShowAsInteger}) ? ${neoRowsToShowAsInteger} : 0`)
-            console.log(`returning (${(currentFirstRowShowingNumber - ((currentFirstRowShowingNumber >= neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0)).toString()})`)
-            return (
-                (currentFirstRowShowingNumber - ((currentFirstRowShowingNumber >= neoRowsToShowAsInteger) ? neoRowsToShowAsInteger : 0)).toString()
-            )
+                /*
+                    neoRowsToShow = 5
+                    50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
+                        5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
+                */
+            let returnRowNumber = 0
+                       
+                //  50 >= 50 then 50 - 50 = 0
+                //   7 >=  5 then  7 -  5 = 2
+            if (currentFirstRowShowingNumber >= neoRowsToShowAsInteger) {
+
+                returnRowNumber = currentFirstRowShowingNumber - neoRowsToShowAsInteger
+            }
+                //  19 >= 50 then return 0
+                //   2 >=  5 then return 0
+            else {
+
+                returnRowNumber = 0
+            }
+
+            return ( returnRowNumber.toString() )
         })
 
     }
@@ -116,15 +125,11 @@ export default function NASANeoMainContent() {
     function pageForwardThroughRows(event) {
         const {name, value} = event.target
 
-        console.log("   ---   pageForwardThroughRows")
-
         setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)    
-    
-            console.log(`${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger}`)
-                
-            return ((currentFirstRowShowingNumber + neoRowsToShowAsInteger <= allNEOsArray.element_count) ?
+                    
+            return ((currentFirstRowShowingNumber + neoRowsToShowAsInteger < allNEOsArray.element_count) ?
              (currentFirstRowShowingNumber + neoRowsToShowAsInteger).toString() :
               allNEOsArray.element_count - neoRowsToShowAsInteger)
         })
@@ -138,7 +143,9 @@ export default function NASANeoMainContent() {
             return (<h3 className="error"> The Start Date {neoInputState.dateNeoSearchStart} is AFTER End Date {neoInputState.dateNeoSearchEnd}</h3>)
         } 
         else if (errorMessage.responseStatus === 400 ) {
-            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3>)
+            return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) 
+                        Type ({ errorMessage.responseType }) 
+                        Error Message ({ errorMessage.responseStatusText } (errorMessage.responseType === "cors") ? "This 400 cors return means that there are too many days between the Start & End" : "") </h3>)
         }
         else if (errorMessage.responseStatus === -357) {
             return (<h3 className="error"> API Error Number ({errorMessage.responseStatus}) Type ({ errorMessage.responseType }) Error Message ({ errorMessage.responseStatusText }) </h3>)
@@ -147,8 +154,6 @@ export default function NASANeoMainContent() {
     }
     
     function startNEOSearch(event) {
-
-        console.log( `Search Button -> startNEOSearch -> currentFirstRowShowing is ${currentFirstRowShowing}` )
 
         setErrorMessage(prevErrorMessage => {
             return { 
@@ -191,8 +196,6 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            // Get the row + (row + neoRowsToShow) sorted data
-            console.log(`dateNEOsArray.slice(currentFirstRowShowing ${currentFirstRowShowing}, ${parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  currentFirstRowShowing ${currentFirstRowShowing} + neoInputState.neoRowsToShow ${neoInputState.neoRowsToShow})`)
             const dateNEOsArraySliced = dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
