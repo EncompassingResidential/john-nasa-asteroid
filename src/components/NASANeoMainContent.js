@@ -1,4 +1,5 @@
-import React from 'react';
+import React                    from 'react';
+import { useState, useEffect }  from 'react';
 
 import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Table } from 'react-bootstrap'
 // import { usePagination } from '@table-library/react-table-library/pagination'
@@ -9,9 +10,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { formatFloatToString, sortNEOArray } from './NASANeoSupportFunctions.js'
 import { getNASANeoDataViaAPI } from './NASANeoAPICalls.js'
 
-import sort_up_arrow from '../images/Up_Green_Arrow.jpg'
+import sort_up_arrow   from '../images/Up_Green_Arrow.jpg'
 import sort_down_arrow from '../images/Down_Red_Arrow.jpg'
-
+import sort_both_arrows   from '../images/Sort_Up_And_Down_Arrow.jpg'
 
 export default function NASANeoMainContent() {
 
@@ -36,12 +37,12 @@ export default function NASANeoMainContent() {
     React.useEffect(() => {
             localStorage.setItem('neosArrayStorage', JSON.stringify(allNEOsArray))
         }, [allNEOsArray]
-    );
+    )
 
     React.useEffect(() => {
             localStorage.setItem('neoInputStateStorage', JSON.stringify(neoInputState))
         }, [neoInputState]
-    );
+    )
 
     function clearLocalStorage() {
         localStorage.clear();
@@ -77,6 +78,8 @@ export default function NASANeoMainContent() {
 
     function handleSortingChange(tableColumnName) {
 
+        console.log("        - - -   IN function handleSortingChange")
+
         setSortColumn(prevSortColumn => {
             return tableColumnName
         })
@@ -84,8 +87,63 @@ export default function NASANeoMainContent() {
         setIsSortAscending(prevIsSortAscending => {
             return (prevIsSortAscending) ? false : true
         })
+
     }
 
+    /*
+    Error message:
+    src\components\NASANeoMainContent.js
+  Line 108:55:  React Hook "useState" is called in function "handleSortingImage" that is 
+                neither a React function component nor a custom React Hook function. 
+                React component names must start with an uppercase letter. 
+                React Hook names must start with the word "use"   react-hooks/rules-of-hooks
+  Line 110:9:   React Hook "useEffect" is called in function "handleSortingImage" that is 
+                neither a React function component nor a custom React Hook function. 
+                React component names must start with an uppercase letter. 
+                React Hook names must start with the word "use"  react-hooks/rules-of-hooks
+
+  when I called on line 434 <img className="sort--image" src={handleSortingImage("est_diameter_feet_est_diameter_max")} alt="Sort Direction" />
+  
+function handleSortingImage(tableColumnName) {
+        const [sortColumnImage, setSortColumnImage] = useState(sort_both_arrows)
+
+        useEffect(() => {
+            setSortColumnImage(prevSortColumnImage => {
+                let sorting_image = sort_both_arrows
+                console.log("  IN function handleSortingChange -> setSortColumnImage")
+                console.log("     sorting_image = sort_both_arrows")
+                console.log(`      NEXT is if (sortColumn ${sortColumn} === tableColumnName ${tableColumnName})`)
+                if (sortColumn === tableColumnName) {
+                    console.log("     if (sortColumn === tableColumnName)")
+                    sorting_image = (isSortAscending) ? sort_down_arrow : sort_up_arrow
+                }
+    
+                return sorting_image
+            })
+    
+        })
+    
+        return sortColumnImage
+    }
+    */
+
+    /* This results in too many renders
+    function handleSortingImage(tableColumnName) {
+
+        setSortColumnImage(prevSortColumnImage => {
+            let sorting_image = sort_both_arrows
+            console.log("  IN function handleSortingChange -> setSortColumnImage")
+            console.log("     sorting_image = sort_both_arrows")
+            console.log(`      NEXT is if (sortColumn ${sortColumn} === tableColumnName ${tableColumnName})`)
+            if (sortColumn === tableColumnName) {
+                console.log("     if (sortColumn === tableColumnName)")
+                sorting_image = (isSortAscending) ? sort_down_arrow : sort_up_arrow
+            }
+
+            return sorting_image
+        })
+    } 
+    */
     
     function pageBackwardThroughRows(event) {
             // useState on currentFirstRowShowing PROPerty && currentFirstRowShowing's value
@@ -373,7 +431,7 @@ export default function NASANeoMainContent() {
                                 onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={(sortColumn === "est_diameter_feet_est_diameter_max") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
+                                ><img className="sort--image" src={handleSortingImage("est_diameter_feet_est_diameter_max")} alt="Sort Direction" /></button></div></th>
                             <th><div className="d-flex flex-row">Closest Approach on:<button
                                 onClick={() => handleSortingChange("closest_approach_date_full")}
                                 key={new Date().getMilliseconds()}
