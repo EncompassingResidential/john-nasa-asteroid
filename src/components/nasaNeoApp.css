@@ -38,15 +38,6 @@
     font-weight: 500;
 }
 
-$grid-breakpoints: {
-    xs: 0;
-    sm: 576px;
-    md: 768px;
-    lg: 992px;
-    xl: 1200px;
-    xxl: 1400px
-}
-
 .table--header {
     background-color: inherit;
     border: none;
@@ -59,4 +50,8 @@ $grid-breakpoints: {
     border-radius: 25px;
     border: 2px solid blue;
     padding: 2px
+}
+
+.leftcolumn--data {
+    background-color: red;
 }

@@ -95,6 +95,7 @@ export default function NASANeoMainContent() {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
+            console.log("   ---   pageBackwardThroughRows")
                 /*
                     neoRowsToShow = 5
                     50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
@@ -102,17 +103,21 @@ export default function NASANeoMainContent() {
                 */
             let returnRowNumber = 0
                        
-                //  50 >= 50 then 50 - 50 = 0
+            //  50 >= 50 then 50 - 50 = 0
                 //   7 >=  5 then  7 -  5 = 2
             if (currentFirstRowShowingNumber >= neoRowsToShowAsInteger) {
-
+                console.log(`   if (${currentFirstRowShowingNumber} >= ${neoRowsToShowAsInteger})`)
+                
                 returnRowNumber = currentFirstRowShowingNumber - neoRowsToShowAsInteger
+                console.log(`returnRowNumber ${returnRowNumber} =  ${currentFirstRowShowingNumber} - ${neoRowsToShowAsInteger}`)
             }
                 //  19 >= 50 then return 0
                 //   2 >=  5 then return 0
             else {
+                console.log(`   ELSE (${currentFirstRowShowingNumber} < ${neoRowsToShowAsInteger})`)
 
                 returnRowNumber = 0
+                console.log(`returnRowNumber ${returnRowNumber}`)
             }
 
             return ( returnRowNumber.toString() )
@@ -123,14 +128,39 @@ export default function NASANeoMainContent() {
 
     function pageForwardThroughRows(event) {
         const {name, value} = event.target
-
+        console.log("   ---   pageForwardThroughRows")
         setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)    
-                    
-            return ((currentFirstRowShowingNumber + neoRowsToShowAsInteger < allNEOsArray.element_count) ?
-             (currentFirstRowShowingNumber + neoRowsToShowAsInteger).toString() :
-              allNEOsArray.element_count - neoRowsToShowAsInteger)
+
+            console.log(`   ${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger} < ${allNEOsArray.element_count}`)
+
+            let returnRowNumber = 0
+            /*
+                (0 + 100 < 82) ? (0 + 100) : 82 - 100 returns -18
+                then 2nd+ time pressing Forward button
+                (-18 + 100 < 82) ? (-18 + 100) : 82 - 100 returns -18
+
+                (0 + 81 < 82) ? (0 + 81) : 82 - 81 returns 81
+                then 2nd+ time pressing Forward button
+                (81 + 81 < 82) ? (81 + 81) : 82 - 81 returns 0 (I want to return 82 - 81 = 1)
+
+                */
+            if (currentFirstRowShowingNumber + neoRowsToShowAsInteger < allNEOsArray.element_count) {
+                console.log(`       IF (${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger}) `)
+                    returnRowNumber = currentFirstRowShowingNumber + neoRowsToShowAsInteger
+            } 
+            else {
+                returnRowNumber = allNEOsArray.element_count - neoRowsToShowAsInteger
+                console.log(`           ELSE  ${allNEOsArray.element_count} - ${neoRowsToShowAsInteger}`)
+                if (returnRowNumber < 0) {
+                    returnRowNumber = 0
+                }
+            }
+
+            console.log(`                    returnRowNumber ${returnRowNumber}`)
+            return ( returnRowNumber.toString() )
+
         })
 
     }
@@ -215,7 +245,9 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            const dateNEOsArraySliced = dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
+            console.log(`dateNEOsArray.slice(currentFirstRowShowing ${currentFirstRowShowing}, ${parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  currentFirstRowShowing ${currentFirstRowShowing} + neoInputState.neoRowsToShow ${neoInputState.neoRowsToShow})`)
+            const dateNEOsArraySliced = 
+                         dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
 
@@ -223,23 +255,14 @@ export default function NASANeoMainContent() {
                 (neo.is_potentially_hazardous_asteroid === true) ? classString = "text-danger py-1" : classString = "text-success py-1"
 
                 return (
-                    <tr className={classString}>
-                        <td className={classString}>{neo.id}</td>
-                        <td className={classString} xl={3}>{neo.name}</td>
+                    <tr className={classString} key={neo.id}>
+                        <td className={classString} xs={3}>{neo.id}</td>
+                        <td className={classString} xs={3}>{neo.name}</td>
                         <td className={classString}>{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</td>
                         <td className={classString} xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
                         <td className={classString} xs={5}>{neo.closest_approach_date_full}</td>
                         <td className={classString} xs={5}>{formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</td>
                         <td className={classString}>{neo.cad_orbiting_body} by {formatFloatToString(+(neo.cad_miss_distance_miles))} Miles</td>
-                        <td className="pt-1" >
-                            <button
-                                onClick={() => getNeoDetails(neo.links_self)}
-                                key={neo.id}
-                                variant="outline-danger"
-                                className=""
-                                >NEO Details
-                            </button>
-                        </td>
                     </tr>
                 )
             })
@@ -250,7 +273,7 @@ export default function NASANeoMainContent() {
             console.log(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}</PageItem>`)
 
             // 3/13/22 This does return proper React JSX, but when I put inside array ["<PageItem>etc."] it didn't return properly.
-            allNEOsSortedToRender = (<PageItem>Press "Search for NEOs" Button to get NASA data - {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
+            allNEOsSortedToRender = (<PageItem key="1234567890">Press "Search for NEOs" Button to get NASA data - {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
         }
 
         return allNEOsSortedToRender
@@ -334,15 +357,6 @@ export default function NASANeoMainContent() {
                         /> }
                         {(neoAppStatus.responseStatus === 300) ? "Waiting on NASA" : "Search for NEOs"}
                     </Button>
-                    <Button
-                        onClick={clearLocalStorage}
-                        size="sm"
-                        variant="primary"
-                        className="mx-5 p-2 my-1"
-                        spacing="15"
-                    >
-                        Clear Local Storage
-                    </Button>
                     { neoHandleAppStatus(neoAppStatus) }
                     
                 </div>
@@ -352,8 +366,8 @@ export default function NASANeoMainContent() {
                 <Table  hover border={2} className="px-1">
                     <thead>
                         <tr>
-                            <th>NEO ID</th>
-                            <th><div className="d-flex flex-row">NEO Name:</div></th>
+                            <th xs={3} className="leftcolumn--data">NEO ID</th>
+                            <th xs={3}><div className="d-flex flex-row">NEO Name:</div></th>
                             <th>Is NEO Hazardous?</th>
                             <th><div className="d-flex flex-row">Diameter:<button
                                 onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
@@ -375,7 +389,6 @@ export default function NASANeoMainContent() {
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "cad_miss_distance_miles") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                            <th>NEO Details 2</th>
                        </tr>
                        <tr>
                             <div className="d-flex flex-row">
@@ -419,7 +432,7 @@ export default function NASANeoMainContent() {
                                     value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
 
                                     size="sm"
-                                    variant="warning"
+                                    variant="success"
                                     active
                                     className="ml-5"
                                     
