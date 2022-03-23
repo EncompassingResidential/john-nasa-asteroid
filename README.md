@@ -50,8 +50,37 @@ Error Message (This "400 cors" usually means that there are too many days
 5. - The columns sort in one direction.  Next release will sort in both directions.
     Work around, if you go to the bottom of the data then sort you will see each's column's maximum data.
 
-Markup : - [ ] An uncompleted task
+
+~~~
+
+1. A numbered list
+    1. A nested numbered list
+    2. Which is numbered
+2. Which is numbered
+
+~~~
+ Markup : 1. A numbered list
+              1. A nested numbered list
+              2. Which is numbered
+          2. Which is numbered
+~~~
+
+- [ ] An uncompleted task
+- [x] A completed task
+
+~~~
+ Markup : - [ ] An uncompleted task
           - [x] A completed task
+~~~
+
+- [ ] An uncompleted task
+    - [ ] A subtask
+
+~~~
+ Markup : - [ ] An uncompleted task
+              - [ ] A subtask
+~~~
+
 
 ### manual acquistion of data
 
