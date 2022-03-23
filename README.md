@@ -4,7 +4,7 @@ This App gets data from NASA's  “near earth objects” (NEO’s) JPL sever to 
 
 [You can find John Ritz's CV Resume here at Linked In www](https://www.linkedin.com/in/johntritz/)
 
-[click here for my personal Life Coach website](https://www.soberjourneycopilot.com/)
+[Click here for my personal Life Coach website, specialty is Addiction after 5 years of addiction counseling in Oregon from 2016 to 2021](https://www.soberjourneycopilot.com/)
 
 # When the App comes up
 
