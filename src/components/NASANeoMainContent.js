@@ -353,24 +353,24 @@ export default function NASANeoMainContent() {
                     <thead>
                         <tr>
                             <th>NEO ID</th>
-                            <th><div class="d-flex flex-row">NEO Name:</div></th>
+                            <th><div className="d-flex flex-row">NEO Name:</div></th>
                             <th>Is NEO Hazardous?</th>
-                            <th><div class="d-flex flex-row">Diameter:<button
+                            <th><div className="d-flex flex-row">Diameter:<button
                                 onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "est_diameter_feet_est_diameter_max") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                            <th><div class="d-flex flex-row">Closest Approach on:<button
+                            <th><div className="d-flex flex-row">Closest Approach on:<button
                                 onClick={() => handleSortingChange("closest_approach_date_full")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "closest_approach_date_full") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                            <th><div class="d-flex flex-row">Relative Velocity:<button
+                            <th><div className="d-flex flex-row">Relative Velocity:<button
                                 onClick={() => handleSortingChange("cad_relative_velocity_miles_per_hour")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "cad_relative_velocity_miles_per_hour") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                            <th><div class="d-flex flex-row">Distance Missed from Body:<button
+                            <th><div className="d-flex flex-row">Distance Missed from Body:<button
                                 onClick={() => handleSortingChange("cad_miss_distance_miles")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
@@ -378,7 +378,7 @@ export default function NASANeoMainContent() {
                             <th>NEO Details 2</th>
                        </tr>
                        <tr>
-                            <div class="d-flex flex-row">
+                            <div className="d-flex flex-row">
                                 <Button
                                     onClick={pageBackwardThroughRows}
                                     name="currentFirstRowShowing"
@@ -386,7 +386,7 @@ export default function NASANeoMainContent() {
 
                                     size="sm"
                                     variant="success"
-                                    className=""
+                                    className="mx-5  my-2"
                                     spacing="15"
                                 >
                                     Back {neoInputState.neoRowsToShow} Rows
@@ -398,7 +398,7 @@ export default function NASANeoMainContent() {
 
                                     size="sm"
                                     variant="primary"
-                                    className="mx-5 p-2 my-1"
+                                    className="mx-5 my-2"
                                     spacing="15"
                                 >
                                     Go Forward {neoInputState.neoRowsToShow} Rows
@@ -410,6 +410,39 @@ export default function NASANeoMainContent() {
                     <tbody>
                         {NEOElementsToRender()}
                     </tbody>
+                    <tfoot>
+                        <div className="d-flex flex-row">
+                            <text className="ml-1">------------</text>
+                                <Button
+                                    onClick={pageBackwardThroughRows}
+                                    name="currentFirstRowShowing"
+                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+
+                                    size="sm"
+                                    variant="warning"
+                                    active
+                                    className="ml-5"
+                                    
+                                >
+                                    Back {neoInputState.neoRowsToShow} Rows
+                                </Button>
+                                <text className="ml-5">------------</text>
+                                <Button
+                                    onClick={pageForwardThroughRows}
+                                    name="currentFirstRowShowing"
+                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+
+                                    size="sm"
+                                    variant="primary"
+                                    active
+                                    className="mlg-5 p-2 my-1"
+                                    spacing="15"
+                                >
+                                    Go Forward {neoInputState.neoRowsToShow} Rows
+                                </Button>
+                            </div>
+
+                    </tfoot>
                 </Table>
             </Container>
 
