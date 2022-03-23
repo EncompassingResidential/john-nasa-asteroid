@@ -51,7 +51,7 @@ export default function NASANeoMainContent() {
     }
 
     /*
-    Getting this error message in the Chrome Console 3/10 to 3/22/22:
+    Getting this error message in the Chrome Console 3/10 to 3/23/22:
 
     "Uncaught (in promise) Error: The message port closed before a response was received."
 
@@ -80,8 +80,6 @@ export default function NASANeoMainContent() {
 
     function handleSortingChange(tableColumnName) {
 
-        console.log("        - - -   IN function handleSortingChange")
-
         setSortColumn(prevSortColumn => {
             return tableColumnName
         })
@@ -93,11 +91,8 @@ export default function NASANeoMainContent() {
         // This lags behind current state
         setSortColumnImage(prevSortColumnImage => {
             let sorting_image = sort_both_arrows
-            console.log("  IN function handleSortingChange -> setSortColumnImage")
-            console.log("     sorting_image = sort_both_arrows")
-            console.log(`      NEXT is if (sortColumn ${sortColumn} === tableColumnName ${tableColumnName})`)
+
             if (sortColumn === tableColumnName) {
-                console.log("     if (sortColumn === tableColumnName)")
                 sorting_image = (isSortAscending) ? sort_down_arrow : sort_up_arrow
             }
 
@@ -132,7 +127,6 @@ export default function NASANeoMainContent() {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
-            console.log("   ---   pageBackwardThroughRows")
                 /*
                     neoRowsToShow = 5
                     50 - 5 = 45  so   50 - (50 > 5) = 50 - 5
@@ -143,18 +137,12 @@ export default function NASANeoMainContent() {
             //  50 >= 50 then 50 - 50 = 0
                 //   7 >=  5 then  7 -  5 = 2
             if (currentFirstRowShowingNumber >= neoRowsToShowAsInteger) {
-                console.log(`   if (${currentFirstRowShowingNumber} >= ${neoRowsToShowAsInteger})`)
-
                 returnRowNumber = currentFirstRowShowingNumber - neoRowsToShowAsInteger
-                console.log(`returnRowNumber ${returnRowNumber} =  ${currentFirstRowShowingNumber} - ${neoRowsToShowAsInteger}`)
             }
                 //  19 >= 50 then return 0
                 //   2 >=  5 then return 0
             else {
-                console.log(`   ELSE (${currentFirstRowShowingNumber} < ${neoRowsToShowAsInteger})`)
-
                 returnRowNumber = 0
-                console.log(`returnRowNumber ${returnRowNumber}`)
             }
 
             return ( returnRowNumber.toString() )
@@ -165,12 +153,10 @@ export default function NASANeoMainContent() {
 
     function pageForwardThroughRows(event) {
         const {name, value} = event.target
-        console.log("   ---   pageForwardThroughRows")
+
         setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
             const currentFirstRowShowingNumber = parseInt(value)
             const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
-
-            console.log(`   ${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger} < ${allNEOsArray.element_count}`)
 
             let returnRowNumber = 0
             /*
@@ -184,20 +170,17 @@ export default function NASANeoMainContent() {
 
                 */
             if (currentFirstRowShowingNumber + neoRowsToShowAsInteger < allNEOsArray.element_count) {
-                console.log(`       IF (${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger}) `)
                     returnRowNumber = currentFirstRowShowingNumber + neoRowsToShowAsInteger
             }
             else {
                 returnRowNumber = allNEOsArray.element_count - neoRowsToShowAsInteger
-                console.log(`           ELSE  ${allNEOsArray.element_count} - ${neoRowsToShowAsInteger}`)
+
                 if (returnRowNumber < 0) {
                     returnRowNumber = 0
                 }
             }
 
-            console.log(`                    returnRowNumber ${returnRowNumber}`)
             return ( returnRowNumber.toString() )
-
         })
 
     }
@@ -231,10 +214,8 @@ export default function NASANeoMainContent() {
 
     function startNEOSearch(event) {
 
-        console.log(`\n    +++   +++   sortColumn ${sortColumn}\n   +++   +++   +++   +++   isSortAscending ${isSortAscending}`)
-
         if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {
-            console.log("if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {")
+
             setNeoInputState(prevNEOInputState => {
                 return {
                     ...prevNEOInputState,
@@ -246,18 +227,12 @@ export default function NASANeoMainContent() {
         setNeoAppStatus(prevNeoAppStatus => {
             return {
                 responseStatus:     300,
-                responseType:       "Searching  ",
+                responseType:       "Search ",
                 responseStatusText: `Ringing up NASA NEO API Server - Please Wait...`
             }
         })
 
         getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setCurrentFirstRowShowing, setSortColumn)
-
-    }
-
-    function getNeoDetails(props) {
-
-        console.dir(props)
 
     }
 
@@ -284,7 +259,6 @@ export default function NASANeoMainContent() {
 
             sortNEOArray(dateNEOsArray, sortColumn)
 
-            console.log(`dateNEOsArray.slice(currentFirstRowShowing ${currentFirstRowShowing}, ${parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  currentFirstRowShowing ${currentFirstRowShowing} + neoInputState.neoRowsToShow ${neoInputState.neoRowsToShow})`)
             const dateNEOsArraySliced =
                          dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
@@ -308,9 +282,6 @@ export default function NASANeoMainContent() {
 
         }
         else {
-
-            console.log(`Returning this to Table Render <PageItem>No NASA NEOs for Date ${neoInputState.dateNeoSearchStart} to ${neoInputState.dateNeoSearchEnd}</PageItem>`)
-
             // 3/13/22 This does return proper React JSX, but when I put inside array ["<PageItem>etc."] it didn't return properly.
             allNEOsSortedToRender = (<PageItem key="1234567890">Press "Search for NEOs" Button to get NASA data - {neoInputState.dateNeoSearchStart} to {neoInputState.dateNeoSearchEnd}</PageItem>)
         }

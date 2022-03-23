@@ -76,8 +76,6 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNe
 
     const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
 
-    console.log(`   ---   ---   numberOfDays = ${numberOfDays}`)
-
     if (numberOfDays < 0) {
 
         response.status = 123
@@ -103,8 +101,6 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNe
                     near_earth_objects  : flattenedNEOData
                 }
             })
-
-            console.log(`if (neoAppStatus === 200)`)
         
             // Set Table data to 1st row
             setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
