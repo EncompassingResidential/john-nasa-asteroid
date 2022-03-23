@@ -1,7 +1,7 @@
 import React                    from 'react';
 import { useState, useEffect }  from 'react';
 
-import { Button, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Table } from 'react-bootstrap'
+import { Button, ButtonGroup, Card, Col, Container, Form, Modal, PageItem, Row, Spinner, Table } from 'react-bootstrap'
 // import { usePagination } from '@table-library/react-table-library/pagination'
 // import { useTable } from 'react-table'
 
@@ -24,6 +24,8 @@ export default function NASANeoMainContent() {
     const [sortColumn, setSortColumn] = React.useState("closest_approach_date_full")
 
     const [isSortAscending, setIsSortAscending] = React.useState(true)
+
+    const [sortColumnImage, setSortColumnImage] = useState(sort_both_arrows)
 
     const [currentFirstRowShowing, setCurrentFirstRowShowing] = React.useState(0)
 
@@ -62,18 +64,18 @@ export default function NASANeoMainContent() {
         setNeoInputState(prevNEOInputState => {
             return {
                 ...prevNEOInputState,
-                [name]: (value < 1) ? 1 : value
+                [name]: (value < 1) ? 10 : value
             }
         })
 
         setNeoAppStatus(prevNeoAppStatus => {
-            return { 
+            return {
                 responseStatus:     200,
                 responseType:       "",
                 responseStatusText: ""
             }
         })
-    
+
     }
 
     function handleSortingChange(tableColumnName) {
@@ -88,44 +90,21 @@ export default function NASANeoMainContent() {
             return (prevIsSortAscending) ? false : true
         })
 
-    }
+        // This lags behind current state
+        setSortColumnImage(prevSortColumnImage => {
+            let sorting_image = sort_both_arrows
+            console.log("  IN function handleSortingChange -> setSortColumnImage")
+            console.log("     sorting_image = sort_both_arrows")
+            console.log(`      NEXT is if (sortColumn ${sortColumn} === tableColumnName ${tableColumnName})`)
+            if (sortColumn === tableColumnName) {
+                console.log("     if (sortColumn === tableColumnName)")
+                sorting_image = (isSortAscending) ? sort_down_arrow : sort_up_arrow
+            }
 
-    /*
-    Error message:
-    src\components\NASANeoMainContent.js
-  Line 108:55:  React Hook "useState" is called in function "handleSortingImage" that is 
-                neither a React function component nor a custom React Hook function. 
-                React component names must start with an uppercase letter. 
-                React Hook names must start with the word "use"   react-hooks/rules-of-hooks
-  Line 110:9:   React Hook "useEffect" is called in function "handleSortingImage" that is 
-                neither a React function component nor a custom React Hook function. 
-                React component names must start with an uppercase letter. 
-                React Hook names must start with the word "use"  react-hooks/rules-of-hooks
-
-  when I called on line 434 <img className="sort--image" src={handleSortingImage("est_diameter_feet_est_diameter_max")} alt="Sort Direction" />
-  
-function handleSortingImage(tableColumnName) {
-        const [sortColumnImage, setSortColumnImage] = useState(sort_both_arrows)
-
-        useEffect(() => {
-            setSortColumnImage(prevSortColumnImage => {
-                let sorting_image = sort_both_arrows
-                console.log("  IN function handleSortingChange -> setSortColumnImage")
-                console.log("     sorting_image = sort_both_arrows")
-                console.log(`      NEXT is if (sortColumn ${sortColumn} === tableColumnName ${tableColumnName})`)
-                if (sortColumn === tableColumnName) {
-                    console.log("     if (sortColumn === tableColumnName)")
-                    sorting_image = (isSortAscending) ? sort_down_arrow : sort_up_arrow
-                }
-    
-                return sorting_image
-            })
-    
+            return sorting_image
         })
-    
-        return sortColumnImage
+
     }
-    */
 
     /* This results in too many renders
     function handleSortingImage(tableColumnName) {
@@ -142,9 +121,9 @@ function handleSortingImage(tableColumnName) {
 
             return sorting_image
         })
-    } 
+    }
     */
-    
+
     function pageBackwardThroughRows(event) {
             // useState on currentFirstRowShowing PROPerty && currentFirstRowShowing's value
         const {name, value} = event.target
@@ -160,12 +139,12 @@ function handleSortingImage(tableColumnName) {
                         5 - 5 =  5  so    5 - ( 5 > 5) =  5 - 0
                 */
             let returnRowNumber = 0
-                       
+
             //  50 >= 50 then 50 - 50 = 0
                 //   7 >=  5 then  7 -  5 = 2
             if (currentFirstRowShowingNumber >= neoRowsToShowAsInteger) {
                 console.log(`   if (${currentFirstRowShowingNumber} >= ${neoRowsToShowAsInteger})`)
-                
+
                 returnRowNumber = currentFirstRowShowingNumber - neoRowsToShowAsInteger
                 console.log(`returnRowNumber ${returnRowNumber} =  ${currentFirstRowShowingNumber} - ${neoRowsToShowAsInteger}`)
             }
@@ -189,7 +168,7 @@ function handleSortingImage(tableColumnName) {
         console.log("   ---   pageForwardThroughRows")
         setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
             const currentFirstRowShowingNumber = parseInt(value)
-            const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)    
+            const neoRowsToShowAsInteger = parseInt(neoInputState.neoRowsToShow)
 
             console.log(`   ${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger} < ${allNEOsArray.element_count}`)
 
@@ -207,7 +186,7 @@ function handleSortingImage(tableColumnName) {
             if (currentFirstRowShowingNumber + neoRowsToShowAsInteger < allNEOsArray.element_count) {
                 console.log(`       IF (${currentFirstRowShowingNumber} + ${neoRowsToShowAsInteger}) `)
                     returnRowNumber = currentFirstRowShowingNumber + neoRowsToShowAsInteger
-            } 
+            }
             else {
                 returnRowNumber = allNEOsArray.element_count - neoRowsToShowAsInteger
                 console.log(`           ELSE  ${allNEOsArray.element_count} - ${neoRowsToShowAsInteger}`)
@@ -228,49 +207,51 @@ function handleSortingImage(tableColumnName) {
 
         if (neoAppStatus.responseStatus === 123) {
             return (<h3 className="error"> The Start Date {neoInputState.dateNeoSearchStart} is AFTER End Date {neoInputState.dateNeoSearchEnd}</h3>)
-        } 
+        }
         else if (neoAppStatus.responseStatus === 124) {
             return (<h3 className="information"> Enter in Start Date {neoInputState.dateNeoSearchStart} and End Date {neoInputState.dateNeoSearchEnd} then Please Press "Search for NEOs" Button.</h3>)
-        } 
+        }
         else if (neoAppStatus.responseStatus === 400 ) {
-            return (<h5 className="error"> API Error Number ({neoAppStatus.responseStatus}) 
-                        <text> - - - </text>Type ({ neoAppStatus.responseType }) 
-                        <p>Error Message ({ neoAppStatus.responseStatusText } 
-                        {(neoAppStatus.responseType === "cors") ? "This '400 cors' usually means that there are too many days between the Start & End Date" : ""})</p>
+            return (<h5 className="error"> API Error Number ({neoAppStatus.responseStatus})
+                        <text> - - - </text>Type ({ neoAppStatus.responseType })
+                        <p>Error Message ({ neoAppStatus.responseStatusText }
+                        {(neoAppStatus.responseType === "cors") ? `This "400 cors" usually means that there are too many days between the Start ${neoInputState.dateNeoSearchStart} & End Date ${neoInputState.dateNeoSearchEnd}` : ""})</p>
                         </h5>)
         }
 
             // responseStatus === 300 on 3/22/22 Start Search Status for "Please Wait" events
         else if (neoAppStatus.responseStatus === 300) {
-            return (<h5 className="information"> 
-                    { neoAppStatus.responseType } 
+            return (<h5 className="information">
+                    { neoAppStatus.responseType }
                     { neoAppStatus.responseStatusText } </h5>)
         }
 
         else { return (<div></div>) }
     }
-    
+
     function startNEOSearch(event) {
+
+        console.log(`\n    +++   +++   sortColumn ${sortColumn}\n   +++   +++   +++   +++   isSortAscending ${isSortAscending}`)
 
         if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {
             console.log("if (neoInputState.neoRowsToShow === undefined || neoInputState.neoRowsToShow < 1 ) {")
-            setNeoInputState(prevNEOInputState => { 
+            setNeoInputState(prevNEOInputState => {
                 return {
                     ...prevNEOInputState,
                     neoRowsToShow: 1
-                } 
+                }
             })
         }
 
         setNeoAppStatus(prevNeoAppStatus => {
-            return { 
+            return {
                 responseStatus:     300,
                 responseType:       "Searching  ",
                 responseStatusText: `Ringing up NASA NEO API Server - Please Wait...`
             }
         })
 
-        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus)
+        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setCurrentFirstRowShowing, setSortColumn)
 
     }
 
@@ -304,7 +285,7 @@ function handleSortingImage(tableColumnName) {
             sortNEOArray(dateNEOsArray, sortColumn)
 
             console.log(`dateNEOsArray.slice(currentFirstRowShowing ${currentFirstRowShowing}, ${parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow)}  =  currentFirstRowShowing ${currentFirstRowShowing} + neoInputState.neoRowsToShow ${neoInputState.neoRowsToShow})`)
-            const dateNEOsArraySliced = 
+            const dateNEOsArraySliced =
                          dateNEOsArray.slice(parseInt(currentFirstRowShowing), parseInt(currentFirstRowShowing) + parseInt(neoInputState.neoRowsToShow))
 
             allNEOsSortedToRender = dateNEOsArraySliced.map((neo) => {
@@ -397,26 +378,52 @@ function handleSortingImage(tableColumnName) {
                 </Row>
 
                 <div className="d-flex flex-row">
-                    
-                    <Button
-                        onClick={startNEOSearch}
-                        size="sm"
-                        variant="primary"
-                        className="mx-5 p-2 my-1"
-                        spacing="15"
-                    >
-                        {neoAppStatus.responseStatus === 300 && <Spinner
-                        display="none"
-                        as="span"
-                        animation="grow"
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                        /> }
-                        {(neoAppStatus.responseStatus === 300) ? "Waiting on NASA" : "Search for NEOs"}
-                    </Button>
-                    { neoHandleAppStatus(neoAppStatus) }
-                    
+                    <ButtonGroup >
+                        <Button
+                            onClick={startNEOSearch}
+                            size="sm"
+                            variant="primary"
+                            className="mx-5 p-2 my-1"
+                            spacing="15"
+                        >
+                            {neoAppStatus.responseStatus === 300 && <Spinner
+                            display="none"
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            /> }
+                            {(neoAppStatus.responseStatus === 300) ? "Waiting on NASA" : "Search for NEOs"}
+                        </Button>
+                        { neoHandleAppStatus(neoAppStatus) }
+                        <Button
+                            onClick={pageBackwardThroughRows}
+                            name="currentFirstRowShowing"
+                            value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+                            active
+                            size="sm"
+                            variant="success"
+                            className="mx-5  my-2"
+                            spacing="15"
+                        >
+                            Go Back {neoInputState.neoRowsToShow} Rows
+                        </Button>
+                        <Button
+                            onClick={pageForwardThroughRows}
+                            name="currentFirstRowShowing"
+                            value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+                            active
+                            size="sm"
+                            variant="info"
+                            className="mx-5 my-2"
+                            spacing="15"
+                        >
+                            Go Forward {neoInputState.neoRowsToShow} Rows
+                        </Button>
+                        {neoAppStatus.responseStatus === 200 && <text>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</text>}
+                    </ButtonGroup>
+
                 </div>
 
             </Form>
@@ -426,12 +433,12 @@ function handleSortingImage(tableColumnName) {
                         <tr>
                             <th xs={3} className="leftcolumn--data">NEO ID</th>
                             <th xs={3}><div className="d-flex flex-row">NEO Name:</div></th>
-                            <th>Is NEO Hazardous?</th>
+                            <th>Is NEO Hazardous? </th>
                             <th><div className="d-flex flex-row">Diameter:<button
                                 onClick={() => handleSortingChange("est_diameter_feet_est_diameter_max")}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={handleSortingImage("est_diameter_feet_est_diameter_max")} alt="Sort Direction" /></button></div></th>
+                                ><img className="sort--image" src={(sortColumn === "est_diameter_feet_est_diameter_max") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
                             <th><div className="d-flex flex-row">Closest Approach on:<button
                                 onClick={() => handleSortingChange("closest_approach_date_full")}
                                 key={new Date().getMilliseconds()}
@@ -447,74 +454,43 @@ function handleSortingImage(tableColumnName) {
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><img className="sort--image" src={(sortColumn === "cad_miss_distance_miles") ? sort_down_arrow : sort_up_arrow} alt="Sort Direction" /></button></div></th>
-                       </tr>
-                       <tr>
-                            <div className="d-flex flex-row">
-                                <Button
-                                    onClick={pageBackwardThroughRows}
-                                    name="currentFirstRowShowing"
-                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
-
-                                    size="sm"
-                                    variant="success"
-                                    className="mx-5  my-2"
-                                    spacing="15"
-                                >
-                                    Back {neoInputState.neoRowsToShow} Rows
-                                </Button>
-                                <Button
-                                    onClick={pageForwardThroughRows}
-                                    name="currentFirstRowShowing"
-                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
-
-                                    size="sm"
-                                    variant="primary"
-                                    className="mx-5 my-2"
-                                    spacing="15"
-                                >
-                                    Go Forward {neoInputState.neoRowsToShow} Rows
-                                </Button>
-                            </div>
-                       </tr>
+                        </tr>
                     </thead>
 
                     <tbody>
                         {NEOElementsToRender()}
                     </tbody>
-                    <tfoot>
-                        <div className="d-flex flex-row">
-                            <text className="ml-1">------------</text>
-                                <Button
-                                    onClick={pageBackwardThroughRows}
-                                    name="currentFirstRowShowing"
-                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
-
-                                    size="sm"
-                                    variant="success"
-                                    active
-                                    className="ml-5"
-                                    
-                                >
-                                    Back {neoInputState.neoRowsToShow} Rows
-                                </Button>
-                                <text className="ml-5">------------</text>
-                                <Button
-                                    onClick={pageForwardThroughRows}
-                                    name="currentFirstRowShowing"
-                                    value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
-
-                                    size="sm"
-                                    variant="primary"
-                                    active
-                                    className="mlg-5 p-2 my-1"
-                                    spacing="15"
-                                >
-                                    Go Forward {neoInputState.neoRowsToShow} Rows
-                                </Button>
-                            </div>
-
-                    </tfoot>
                 </Table>
+                <ButtonGroup className="d-flex flex-row">
+                    <Button
+                        onClick={pageBackwardThroughRows}
+                        name="currentFirstRowShowing"
+                        value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+
+                        size="sm"
+                        variant="success"
+                        active
+                        className="ml-5"
+
+                    >
+                        Back {neoInputState.neoRowsToShow} Rows
+                    </Button>
+                    <Button
+                        onClick={pageForwardThroughRows}
+                        name="currentFirstRowShowing"
+                        value={currentFirstRowShowing} // This "value={}" is how to impliment React controlled components
+
+                        size="sm"
+                        variant="info"
+                        active
+                        className="mlg-5 p-2 my-1"
+                        spacing="15"
+                    >
+                        Go Forward {neoInputState.neoRowsToShow} Rows
+                    </Button>
+                    {neoAppStatus.responseStatus === 200 && <text>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</text>}
+                </ButtonGroup>
+
             </Container>
 
         </Card>

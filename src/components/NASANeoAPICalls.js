@@ -70,11 +70,13 @@ export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 }  // function flattenNASANeoData
 
 
-export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus) {
+export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setCurrentFirstRowShowing, setSortColumn) {
 
     let response = { status: 123, type: "Starting Function call getNASANeoDataViaAPI", statusText: "Just beginning"}
 
     const numberOfDays = datesDiffInDays(neoInputState.dateNeoSearchStart, neoInputState.dateNeoSearchEnd)
+
+    console.log(`   ---   ---   numberOfDays = ${numberOfDays}`)
 
     if (numberOfDays < 0) {
 
@@ -101,6 +103,18 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNe
                     near_earth_objects  : flattenedNEOData
                 }
             })
+
+            console.log(`if (neoAppStatus === 200)`)
+        
+            // Set Table data to 1st row
+            setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
+                return "0"
+            })
+
+            setSortColumn(prevSortColumn => {
+                return "closest_approach_date_full"
+            })
+    
         }
         else {
             console.warn(`NASA NEO HTTP request attempted failed Status Code (${response.status}), here is response.type and .statusText`);
