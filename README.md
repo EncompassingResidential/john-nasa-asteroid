@@ -40,21 +40,31 @@ e.g. If NASA sends you 50 NEOs (50 rows), and you type in 4 Rows of Data to Show
 ## Known issues / results that might be unexpected
 
 ~~~
-1. - Start date and End Date are reversed.  Message will be displayed asking you to change your Start and End date.
-2. - I've noticed that this NASA server doesn't like Start and End dates that are too far apart.  I've noticed that this is almost any date difference of 8 days or more.  e.g. 3/23/2022 and 3/31/2022 will most likely return an error from the NASA data server.
+1. - Start date and End Date are reversed.  
+     Message will be displayed asking you to change your Start and End date.
+2. - I've noticed that this NASA server doesn't like Start and End dates that are too far apart.
+     I've noticed that this is almost any date difference of 8 days or more.
+      e.g. 3/23/2022 and 3/31/2022 will most likely return an error from the NASA data server.
 Error message example: from NASA "400 cors"   I've filled this out and show:
 API Error Number (400) - - - Type (cors)
 Error Message (This "400 cors" usually means that there are too many days
  between the Start 2021-04-29 & End Date 2021-05-08)
-3. - If you find yourself waiting longer than 1 or 2 minutes then the data server never talked back to us or the connection was lost and no error was returned so there is nothing to show.  Please try to get the data again and press the "Search for NEOs" button.
-4. - If you try to type in 0 rows to Show or try to delete a single digit of Rows to Show the app will automatically change the Rows of Data to Show to be 10.
+
+3. - If you find yourself waiting longer than 1 or 2 minutes then the data server never 
+     talked back to us or the connection was lost and no error was returned so there is nothing to show.
+       Please try to get the data again and press the "Search for NEOs" button.
+
+4. - If you try to type in 0 rows to Show or try to delete a single digit of Rows
+     to Show the app will automatically change the Rows of Data to Show to be 10.
+
 5. - The columns sort in one direction.  Next release will sort in both directions.
     Work around, if you go to the bottom of the data then sort you will see each's column's maximum data.
 ~~~
 
 ## Updates / Next Revisions
 ~~~
-- [ ] Change sort buttons to go up and Down (maybe change only sorting column to have arrow and other columns have different pic)
+- [ ] Change sort buttons to go up and Down
+         (maybe change only sorting column to have arrow and other columns have different pic)
 - [ ] Add “How many Moon Distances as Tooltip hover above Miss Distance table column”
 - [ ] Have Extra information shown when click on row’s button “NEO Details”
 - [ ] Add export CSV file.
