@@ -19,7 +19,7 @@ The data is from NASA's NEO data server.
 The first time you bring this website up, it might take 60 seconds to appear because Heroku spins up the server from scratch, rebuilding if necessary.  So, go to this Heroku web site then go get a drink and then come back.
 
 ## Picture of example App screen (The ubiquitous Screen Shot)
-[John's NASA NEO App example Screen Shot](https://user-images.githubusercontent.com/94155021/159761018-7ec53072-3f26-4507-a983-481fc93e6a2a.jpg)
+[John's NASA NEO App example Screen Shot]![John-NASA-NEO App Screen Shot](https://user-images.githubusercontent.com/94155021/159761018-7ec53072-3f26-4507-a983-481fc93e6a2a.jpg)
 
 Here is what an example Screen Shot of the App looks like with data from 3/07/2016.  I've noticed that the number of rows per day (date) can change, so I think the NASA NEO server is dynamically calculating or updating the NEOs periodically.
 
@@ -47,6 +47,8 @@ Error Message (This "400 cors" usually means that there are too many days
  between the Start 2021-04-29 & End Date 2021-05-08)
 
 3 - If you find yourself waiting longer than 1 or 2 minutes then the data server never talked back to us or the connection was lost and no error was returned so there is nothing to show.  Please try to get the data again and press the "Search for NEOs" button.
+
+4 - If you try to type in 0 rows to Show or try to delete a single digit of Rows to Show the app will automatically change the Rows of Data to Show to be 10.
 
 ### manual acquistion of data
 
