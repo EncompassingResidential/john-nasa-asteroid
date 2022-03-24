@@ -1,6 +1,8 @@
 
 import { datesDiffInDays } from './NASANeoSupportFunctions.js'
 
+import sort_down_arrow from '../images/Down_Red_Arrow.jpg'
+
 export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 
     const allNearEarthObjectsToFlatten_0 = dataNEOsFromNASA.near_earth_objects
@@ -70,7 +72,7 @@ export function flattenNASANeoData(dataNEOsFromNASA, neoInputState) {
 }  // function flattenNASANeoData
 
 
-export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setCurrentFirstRowShowing, setSortColumn) {
+export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setTableState) {
 
     let response = { status: 123, type: "Starting Function call getNASANeoDataViaAPI", statusText: "Just beginning"}
 
@@ -102,13 +104,13 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNe
                 }
             })
         
-            // Set Table data to 1st row
-            setCurrentFirstRowShowing(prevCurrentFirstRowShowing => {
-                return "0"
-            })
-
-            setSortColumn(prevSortColumn => {
-                return "closest_approach_date_full"
+            setTableState(prevSetTableState => {
+                return {
+                    currentFirstRowShowing: "0", 
+                    sortColumn      : "closest_approach_date_full",
+                    isSortAscending : true,
+                    sortColumnImage : sort_down_arrow
+                }
             })
     
         }
