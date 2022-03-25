@@ -3,7 +3,11 @@ import { Button, ButtonGroup, Spinner } from 'react-bootstrap'
 
 import { getNASANeoDataViaAPI } from './NASANeoAPICalls.js'
 
-const NASANeoSearchForm = ( { neoInputState, setNeoInputState, allNEOsArray, setAllNEOsArray, neoAppStatus, setNeoAppStatus, tableState, setTableState, pageBackwardThroughRows, pageForwardThroughRows } ) => {
+const NASANeoSearchForm = ( { neoInputState, setNeoInputState, 
+                                allNEOsArray, setAllNEOsArray, 
+                                neoAppStatus, setNeoAppStatus, 
+                                tableState, setTableState, 
+                                pageBackwardThroughRows, pageForwardThroughRows } ) => {
 
     function startNEOSearch(event) {
 
@@ -25,7 +29,7 @@ const NASANeoSearchForm = ( { neoInputState, setNeoInputState, allNEOsArray, set
             }
         })
 
-        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus)
+        getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNeoAppStatus, setTableState)
 
     }
 
@@ -40,7 +44,7 @@ const NASANeoSearchForm = ( { neoInputState, setNeoInputState, allNEOsArray, set
         }
         else if (neoAppStatus.responseStatus === 400 ) {
             return (<h5 className="error"> API Error Number ({neoAppStatus.responseStatus})
-                        <text> - - - </text>Type ({ neoAppStatus.responseType })
+                        <p> - - - </p>Type ({ neoAppStatus.responseType })
                         <p>Error Message ({ neoAppStatus.responseStatusText }
                         {(neoAppStatus.responseType === "cors") ? `This "400 cors" usually means that there are too many days between the Start ${neoInputState.dateNeoSearchStart} & End Date ${neoInputState.dateNeoSearchEnd}` : ""})</p>
                         </h5>)
@@ -52,6 +56,8 @@ const NASANeoSearchForm = ( { neoInputState, setNeoInputState, allNEOsArray, set
                     { neoAppStatus.responseType }
                     { neoAppStatus.responseStatusText } </h5>)
         }
+
+        // responseStatus === 200 as of 3/25/22 don't show a verbal response to success except Spinner stops and Button verbage changes
 
         else { return (<div></div>) }
     }
@@ -102,7 +108,7 @@ const NASANeoSearchForm = ( { neoInputState, setNeoInputState, allNEOsArray, set
                 >
                     Go Forward {neoInputState.neoRowsToShow} Rows
                 </Button>
-                {neoAppStatus.responseStatus === 200 && <text>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</text>}
+                {neoAppStatus.responseStatus === 200 && <p>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</p>}
             </ButtonGroup>
 
         </div>

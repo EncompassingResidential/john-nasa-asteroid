@@ -153,18 +153,14 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
 
     }
 
-    /* Spinner code
-    I think needs useState variable
-    - www options
-    : CSS display:'none' https://til.hashrocket.com/posts/9d7e8e1a65-invisible-components-in-react-native
-    : this.setState {isActive: true} https://reactgo.com/react-show-hide-elements/
-
-    */
-
     return (
         <Card body className="mx-1 my-1" border="success">
 
-            <NASANeoSearchForm neoInputState={neoInputState} setNeoInputState={setNeoInputState} allNEOsArray={allNEOsArray} setAllNEOsArray={setAllNEOsArray} neoAppStatus={neoAppStatus} setNeoAppStatus={setNeoAppStatus} tableState={tableState} setTableState={setTableState} pageBackwardThroughRows={pageBackwardThroughRows} pageForwardThroughRows={pageForwardThroughRows} />
+            <NASANeoSearchForm neoInputState={neoInputState} setNeoInputState={setNeoInputState} 
+                            allNEOsArray={allNEOsArray}     setAllNEOsArray={setAllNEOsArray} 
+                            neoAppStatus={neoAppStatus}     setNeoAppStatus={setNeoAppStatus} 
+                            tableState={tableState}         setTableState={setTableState} 
+                            pageBackwardThroughRows={pageBackwardThroughRows} pageForwardThroughRows={pageForwardThroughRows} />
 
             <Container>
                 <Table  hover border={2} className="px-1">
@@ -235,7 +231,7 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
                     >
                         Go Forward {neoInputState.neoRowsToShow} Rows
                     </Button>
-                    {neoAppStatus.responseStatus === 200 && <text>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</text>}
+                    {neoAppStatus.responseStatus === 200 && <p>Total of {allNEOsArray.element_count} NEOs starting {neoInputState.dateNeoSearchStart}</p>}
                 </ButtonGroup>
 
             </Container>

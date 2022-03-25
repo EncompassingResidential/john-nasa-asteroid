@@ -12,7 +12,11 @@ import React from 'react';
 export default function App() {
 
   const [neoInputState, setNeoInputState] = React.useState(JSON.parse(localStorage.getItem('neoInputStateStorage'))
-                                                           || [] )
+                                                           || {
+                                                            dateNeoSearchStart: "",
+                                                            dateNeoSearchEnd: "",
+                                                            neoRowsToShow: 10
+                                                           } )
 
   const [allNEOsArray, setAllNEOsArray] = React.useState(JSON.parse(localStorage.getItem('neosArrayStorage'))
                                                         || [] )
