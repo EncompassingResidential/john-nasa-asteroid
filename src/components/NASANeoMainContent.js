@@ -135,8 +135,8 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
                         <td className={classString} xs={3}>{neo.id}</td>
                         <td className={classString} xs={3}>{neo.name}</td>
                         <td className={classString}>{neo.is_potentially_hazardous_asteroid === true ? "*** NEO is Potentially Hazardous ***" : "NEO is Not Hazardous"}</td>
-                        <td className={classString} xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
                         <td className={classString} xs={5}>{neo.closest_approach_date_full}</td>
+                        <td className={classString} xl={3}>Diameter {formatFloatToString(neo.est_diameter_feet_est_diameter_max)} Feet</td>
                         <td className={classString} xs={5}>{formatFloatToString(+(neo.cad_relative_velocity_miles_per_hour))} Mi/Hr</td>
                         <td className={classString}>{neo.cad_orbiting_body} by {formatFloatToString(+(neo.cad_miss_distance_miles))} Miles</td>
                     </tr>
@@ -170,19 +170,19 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
                             <th xs={3}><div className="d-flex flex-row">NEO Name:</div></th>
                             <th>Is NEO Hazardous? </th>
                             <th><button
-                                onClick={e => setTableState({...tableState, sortColumn: "est_diameter_feet_est_diameter_max", 
-                                                                isSortAscending: !tableState.isSortAscending,
-                                                                sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
-                                key={new Date().getMilliseconds()}
-                                className="table--header"
-                                ><div className="d-flex flex-row">Diameter:<img className="sort--image" src={ (tableState.sortColumn === "est_diameter_feet_est_diameter_max") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
-                            <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "closest_approach_date_full", 
                                                                 isSortAscending: !tableState.isSortAscending,
                                                                 sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
                                 ><div className="d-flex flex-row">Closest Approach on:<img className="sort--image" src={ (tableState.sortColumn === "closest_approach_date_full") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
+                            <th><button
+                                onClick={e => setTableState({...tableState, sortColumn: "est_diameter_feet_est_diameter_max", 
+                                                                isSortAscending: !tableState.isSortAscending,
+                                                                sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
+                                key={new Date().getMilliseconds()}
+                                className="table--header"
+                                ><div className="d-flex flex-row">Diameter:<img className="sort--image" src={ (tableState.sortColumn === "est_diameter_feet_est_diameter_max") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
                             <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "cad_relative_velocity_miles_per_hour", 
                                                                             isSortAscending: !tableState.isSortAscending,
