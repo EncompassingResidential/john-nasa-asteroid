@@ -17,12 +17,20 @@ export function formatFloatToString(floatNumber) {
  }
 
  export function datesDiffInDays(firstDateString, secondDateString) {
-     const firstDate = new Date(firstDateString);
-     const secondDate = new Date(secondDateString);
+
+    let millisecondsDiff = -12345679
+    
+    if (firstDateString !== undefined && secondDateString !== undefined &&
+        firstDateString !== NaN && secondDateString !== NaN) {
+        if (firstDateString !== "" && secondDateString !== "") {
+            const firstDate = new Date(firstDateString);
+            const secondDate = new Date(secondDateString);
+                
+            millisecondsDiff = secondDate.getTime() - firstDate.getTime();
+        }
+    }
          
-     const millisecondsDiff = secondDate.getTime() - firstDate.getTime();
-         
-     return ( millisecondsDiff / (1000 * 60 * 60 * 24) )
+    return ( millisecondsDiff / (1000 * 60 * 60 * 24) )
  }
 
  export function sortNEOArray(dateNEOsArray, tableState) {

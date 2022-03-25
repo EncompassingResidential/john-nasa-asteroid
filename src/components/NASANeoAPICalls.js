@@ -80,9 +80,16 @@ export async function getNASANeoDataViaAPI(neoInputState, setAllNEOsArray, setNe
 
     if (numberOfDays < 0) {
 
-        response.status = 123
-        response.type = "function getNASANeoDataViaAPI() hasn't called fetech(api.nasa.gov) yet"
-        response.statusText = `Start Date ${neoInputState.dateNeoSearchStart} is after End Date ${neoInputState.dateNeoSearchEnd}`
+        if (numberOfDays >  -0.15 && numberOfDays < -0.14) {
+            response.status = 124
+            response.type = "Need Input Data"
+            response.statusText = `Start Date and or End Date need to be filled in`
+        }
+        else {
+            response.status = 123
+            response.type = "function getNASANeoDataViaAPI() hasn't called fetech(api.nasa.gov) yet"
+            response.statusText = `Start Date ${neoInputState.dateNeoSearchStart} is after End Date ${neoInputState.dateNeoSearchEnd}`
+        }
     }
 
     else {
