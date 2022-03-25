@@ -164,7 +164,7 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
     return (
         <Card body className="mx-1 my-1" border="success">
 
-            <NASANeoSearchForm neoInputState={neoInputState} setNeoInputState={setNeoInputState} allNEOsArray={allNEOsArray} setAllNEOsArray={setAllNEOsArray} neoAppStatus={neoAppStatus} setNeoAppStatus={setNeoAppStatus} tableState={tableState} setTableState={setTableState} pageBackwardThroughRows pageForwardThroughRows />
+            <NASANeoSearchForm neoInputState={neoInputState} setNeoInputState={setNeoInputState} allNEOsArray={allNEOsArray} setAllNEOsArray={setAllNEOsArray} neoAppStatus={neoAppStatus} setNeoAppStatus={setNeoAppStatus} tableState={tableState} setTableState={setTableState} pageBackwardThroughRows={pageBackwardThroughRows} pageForwardThroughRows={pageForwardThroughRows} />
 
             <Container>
                 <Table  hover border={2} className="px-1">
@@ -173,34 +173,34 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
                             <th xs={3} className="leftcolumn--data">NEO ID</th>
                             <th xs={3}><div className="d-flex flex-row">NEO Name:</div></th>
                             <th>Is NEO Hazardous? </th>
-                            <th><div className="d-flex flex-row">Diameter:<button
+                            <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "est_diameter_feet_est_diameter_max", 
                                                                 isSortAscending: !tableState.isSortAscending,
                                                                 sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={ (tableState.sortColumn === "est_diameter_feet_est_diameter_max") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></button></div></th>
-                            <th><div className="d-flex flex-row">Closest Approach on:<button
+                                ><div className="d-flex flex-row">Diameter:<img className="sort--image" src={ (tableState.sortColumn === "est_diameter_feet_est_diameter_max") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
+                            <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "closest_approach_date_full", 
                                                                 isSortAscending: !tableState.isSortAscending,
                                                                 sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={ (tableState.sortColumn === "closest_approach_date_full") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></button></div></th>
-                            <th><div className="d-flex flex-row">Relative Velocity:<button
+                                ><div className="d-flex flex-row">Closest Approach on:<img className="sort--image" src={ (tableState.sortColumn === "closest_approach_date_full") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
+                            <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "cad_relative_velocity_miles_per_hour", 
                                                                             isSortAscending: !tableState.isSortAscending,
                                                                             sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={ (tableState.sortColumn === "cad_relative_velocity_miles_per_hour") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></button></div></th>
-                            <th><div className="d-flex flex-row">Distance Missed from Body:<button
+                                ><div className="d-flex flex-row">Relative Velocity:<img className="sort--image" src={ (tableState.sortColumn === "cad_relative_velocity_miles_per_hour") ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
+                            <th><button
                                 onClick={e => setTableState({...tableState, sortColumn: "cad_miss_distance_miles", 
                                                                             isSortAscending: !tableState.isSortAscending,
                                                                             sortColumnImage: (tableState.isSortAscending) ? sort_down_arrow : sort_up_arrow })}
                                 key={new Date().getMilliseconds()}
                                 className="table--header"
-                                ><img className="sort--image" src={ (tableState.sortColumn === "cad_miss_distance_miles" )  ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></button></div></th>
+                                ><div className="d-flex flex-row">Distance Missed from Body:<img className="sort--image" src={ (tableState.sortColumn === "cad_miss_distance_miles" )  ? tableState.sortColumnImage : sort_both_arrows } alt="Sort Direction" /></div></button></th>
                         </tr>
                     </thead>
 
@@ -220,7 +220,7 @@ const NASANeoMainContent = ( {neoInputState, setNeoInputState, allNEOsArray, set
                         className="ml-5"
 
                     >
-                        Back {neoInputState.neoRowsToShow} Rows
+                        Go Back {neoInputState.neoRowsToShow} Rows
                     </Button>
                     <Button
                         onClick={pageForwardThroughRows}
