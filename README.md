@@ -2,7 +2,7 @@
 
 This App gets data from NASA's  “near earth objects” (NEO’s) JPL sever to search via the NASA API.
 
-[The online version of this app is at Heroku website:]([https://john-nasa-asteroid.herokuapp.com/](https://john-nasa-asteroid-c6ecc2aff770.herokuapp.com/))
+[The online version of this app is at Heroku website:](https://john-nasa-asteroid-c6ecc2aff770.herokuapp.com/)
 
 
 [You can find John Ritz's CV Resume here at Linked In www](https://www.linkedin.com/in/johntritz/)
@@ -18,7 +18,7 @@ The data is from NASA's NEO data server.
 
 ## Where to run this App
 
-[The online version of this app is at Heroku website:](https://john-nasa-asteroid.herokuapp.com/)
+[The online version of this app is at Heroku website:](https://john-nasa-asteroid-c6ecc2aff770.herokuapp.com/)
 
 The first time you bring this website up, it might take 60 seconds to appear because Heroku spins up the server from scratch, rebuilding if necessary.  So, go to this Heroku web site then go get a drink and then come back.
 
